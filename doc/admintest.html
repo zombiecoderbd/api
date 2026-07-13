@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🧪 Mission Barisal — Server Route Tester</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-card: #111827;
+      --bg-surface: #1f2937;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --accent-primary: #3b82f6;
+      --accent-secondary: #6366f1;
+      --accent-success: #10b981;
+      --accent-warning: #f59e0b;
+      --accent-danger: #ef4444;
+      --border-color: #334155;
+      --border-light: #475569;
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, Tahoma, Arial, sans-serif;
+      background: var(--bg-primary); color: var(--text-primary);
+      line-height: 1.6; min-height: 100vh;
+    }
+    .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap; gap: 16px;
+    }
+    .logo-container { display: flex; align-items: center; gap: 16px; }
+    .logo {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;
+      font-size: 28px; box-shadow: var(--shadow-md);
+    }
+    .header-text h1 {
+      font-size: 28px; font-weight: 700;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .header-text .subtitle { color: var(--text-muted); font-size: 14px; }
+    .url-config {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg); padding: 20px; margin-bottom: 24px;
+    }
+    .url-config h2 { font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .url-input-row { display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }
+    .url-input {
+      flex: 1; min-width: 200px; padding: 12px 16px; background: var(--bg-surface);
+      border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+      color: var(--text-primary); font-size: 14px; font-family: monospace;
+    }
+    .url-input:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+    .url-status { margin-top: 8px; font-size: 13px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .url-status.connected { color: var(--accent-success); }
+    .url-status.disconnected { color: var(--accent-danger); }
+    .url-status.cached { color: var(--accent-warning); }
+    .preset-urls { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .preset-btn {
+      padding: 6px 12px; background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 12px; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .preset-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+    .btn {
+      padding: 10px 20px; border-radius: var(--radius-sm); border: none; font-weight: 600;
+      font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.2s ease; text-decoration: none; white-space: nowrap;
+    }
+    .btn-primary { background: var(--accent-primary); color: white; }
+    .btn-primary:hover { background: #2563eb; transform: translateY(-1px); }
+    .btn-success { background: var(--accent-success); color: white; }
+    .btn-danger { background: var(--accent-danger); color: white; }
+    .btn-secondary { background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-color); }
+    .btn-secondary:hover { background: var(--border-color); }
+    .btn-small { padding: 6px 12px; font-size: 13px; }
+    .btn-icon { padding: 8px; background: var(--bg-surface); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; }
+    .btn-icon:hover { background: var(--border-color); color: var(--text-primary); }
+    .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; gap: 4px; }
+    .badge-success { background: rgba(16,185,129,0.15); color: var(--accent-success); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-warning { background: rgba(245,158,11,0.15); color: var(--accent-warning); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-danger { background: rgba(239,68,68,0.15); color: var(--accent-danger); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-info { background: rgba(59,130,246,0.15); color: var(--accent-primary); border: 1px solid rgba(59,130,246,0.3); }
+    .tabs { display: flex; gap: 2px; background: var(--bg-surface); border-radius: var(--radius-sm); padding: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+    .tab {
+      flex: 1; padding: 10px; text-align: center; background: transparent; border: none;
+      color: var(--text-muted); font-weight: 500; border-radius: var(--radius-sm); cursor: pointer;
+      transition: all 0.2s ease; min-width: 80px;
+    }
+    .tab.active { background: var(--bg-card); color: var(--text-primary); box-shadow: var(--shadow-md); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 16px; margin-bottom: 20px; }
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+    }
+    .card:hover { border-color: var(--border-light); }
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap; gap: 8px;
+    }
+    .card-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .card-icon { color: var(--accent-primary); font-size: 18px; }
+    .route-list { display: flex; flex-direction: column; gap: 8px; }
+    .route-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: var(--bg-surface); border-radius: var(--radius-md);
+      border: 1px solid var(--border-color); transition: all 0.2s ease; flex-wrap: wrap; gap: 8px;
+    }
+    .route-item:hover { border-color: var(--accent-primary); background: rgba(59,130,246,0.05); }
+    .route-method { font-family: monospace; font-weight: 700; font-size: 12px; padding: 3px 8px; border-radius: 4px; min-width: 50px; text-align: center; }
+    .method-get { background: rgba(16,185,129,0.2); color: var(--accent-success); }
+    .method-post { background: rgba(59,130,246,0.2); color: var(--accent-primary); }
+    .route-path { font-family: monospace; font-size: 13px; color: var(--text-primary); flex: 1; }
+    .route-desc { font-size: 12px; color: var(--text-muted); }
+    .route-actions { display: flex; gap: 6px; }
+    .response-panel {
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: var(--radius-md); overflow: hidden; margin-top: 12px;
+    }
+    .response-header {
+      padding: 10px 16px; background: var(--bg-card); border-bottom: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center; font-size: 13px;
+    }
+    .response-body {
+      padding: 16px; font-family: 'SF Mono','Fira Code',monospace; font-size: 12px;
+      white-space: pre-wrap; word-break: break-all; max-height: 400px; overflow-y: auto;
+      color: var(--accent-success); line-height: 1.5;
+    }
+    .response-body.error { color: var(--accent-danger); }
+    .response-body.loading { color: var(--accent-warning); }
+    .stats-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .stat-item { background: var(--bg-surface); border-radius: var(--radius-md); padding: 12px 16px; text-align: center; min-width: 120px; flex: 1; }
+    .stat-value { font-size: 24px; font-weight: 700; color: var(--accent-primary); }
+    .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    .hidden { display: none !important; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-surface); }
+    ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+    .route-counter { font-size: 13px; color: var(--text-muted); }
+    .route-counter strong { color: var(--accent-primary); }
+    .auto-refresh { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); }
+    .auto-refresh .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-success); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+    .notification {
+      position: fixed; top: 20px; right: 20px; padding: 12px 16px;
+      border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1000; display: flex; align-items: center; gap: 10px;
+      min-width: 300px; max-width: 400px; animation: slideIn 0.3s ease;
+    }
+    .notification.success { background: #064e3b; color: white; }
+    .notification.error { background: #7f1d1d; color: white; }
+    .notification.info { background: #1e293b; color: white; }
+    .notification.warning { background: #78350f; color: white; }
+    @keyframes slideIn { from{transform:translateX(100%);opacity:0;} to{transform:translateX(0);opacity:1;} }
+    @media(max-width:768px){
+      .container{padding:12px;}
+      .header{flex-direction:column;align-items:flex-start;}
+      .url-input-row{flex-direction:column;}
+      .grid{grid-template-columns:1fr;}
+      .tabs{overflow-x:auto;flex-wrap:nowrap;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo-container">
+        <div class="logo"><i class="fas fa-flask"></i></div>
+        <div class="header-text">
+          <h1>Mission Barisal — Route Tester</h1>
+          <p class="subtitle">Test all server endpoints in real-time • 24h URL cache</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="auto-refresh"><div class="dot"></div><span id="lastRefreshTime">—</span></div>
+        <button class="btn-icon" id="refreshAll" title="Refresh All"><i class="fas fa-sync-alt"></i></button>
+      </div>
+    </div>
+
+    <!-- URL Config -->
+    <div class="url-config">
+      <h2><i class="fas fa-link card-icon"></i> Server URL Configuration</h2>
+      <div class="url-input-row">
+        <input type="text" class="url-input" id="serverUrl" placeholder="Enter server URL, e.g. http://localhost:5010/v1" spellcheck="false" />
+        <button class="btn btn-primary" id="connectBtn" onclick="connectServer()"><i class="fas fa-plug"></i> Connect</button>
+        <button class="btn btn-danger btn-small" onclick="clearCache()"><i class="fas fa-trash"></i> Clear Cache</button>
+      </div>
+      <div class="preset-urls">
+        <span style="font-size:12px;color:var(--text-muted);">Presets:</span>
+        <button class="preset-btn" onclick="setUrl('http://localhost:5010/v1')">localhost:5010</button>
+        <button class="preset-btn" onclick="setUrl('http://localhost:5000/v1')">localhost:5000</button>
+        <button class="preset-btn" onclick="setUrl('https://admin.selfsmartearning.com/v1')">admin.selfsmartearning</button>
+        <button class="preset-btn" onclick="setUrl('https://m.skilltoearn.org/v1')">skilltoearn</button>
+      </div>
+      <div class="url-status disconnected" id="urlStatus"><i class="fas fa-circle-xmark"></i> <span>No server connected.</span></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="overview" onclick="showTab('overview')"><i class="fas fa-chart-line"></i> Overview</button>
+      <button class="tab" data-tab="get-routes" onclick="showTab('get-routes')"><i class="fas fa-arrow-down"></i> GET Routes</button>
+      <button class="tab" data-tab="post-routes" onclick="showTab('post-routes')"><i class="fas fa-arrow-up"></i> POST Routes</button>
+      <button class="tab" data-tab="admin" onclick="showTab('admin')"><i class="fas fa-shield-halved"></i> Admin</button>
+      <button class="tab" data-tab="chat" onclick="showTab('chat')"><i class="fas fa-comments"></i> Chat</button>
+    </div>
+
+    <!-- Overview Tab -->
+    <div class="tab-content" id="overview-tab">
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-value" id="statStatus">—</div><div class="stat-label">Status</div></div>
+        <div class="stat-item"><div class="stat-value" id="statVersion">—</div><div class="stat-label">Version</div></div>
+        <div class="stat-item"><div class="stat-value" id="statUptime">—</div><div class="stat-label">Uptime</div></div>
+        <div class="stat-item"><div class="stat-value" id="statRequests">—</div><div class="stat-label">Requests</div></div>
+        <div class="stat-item"><div class="stat-value" id="statAgents">—</div><div class="stat-label">Agents</div></div>
+        <div class="stat-item"><div class="stat-value" id="statSessions">—</div><div class="stat-label">Sessions</div></div>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-heart-pulse card-icon"></i> Health Check</div><button class="btn btn-secondary btn-small" onclick="testRoute('GET','/health','healthResult')"><i class="fas fa-play"></i> Test</button></div>
+          <div id="healthResult" class="response-body" style="max-height:150px;">Click Test to check health...</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-id-card card-icon"></i> Identity</div><button class="btn btn-secondary btn-small" onclick="testRoute('GET','/identity','identityResult')"><i class="fas fa-play"></i> Test</button></div>
+          <div id="identityResult" class="response-body" style="max-height:150px;">Click Test to check identity...</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-signal card-icon"></i> Status</div><button class="btn btn-secondary btn-small" onclick="testRoute('GET','/status','statusResult')"><i class="fas fa-play"></i> Test</button></div>
+          <div id="statusResult" class="response-body" style="max-height:150px;">Click Test to check status...</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-cogs card-icon"></i> Runtime Config</div><button class="btn btn-secondary btn-small" onclick="testRoute('GET','/api/config','configResult')"><i class="fas fa-play"></i> Test</button></div>
+          <div id="configResult" class="response-body" style="max-height:150px;">Click Test to view config...</div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-bolt card-icon"></i> Quick Test All</div>
+          <button class="btn btn-primary btn-small" onclick="testAllGetRoutes()"><i class="fas fa-play"></i> Test All GET</button>
+        </div>
+        <div id="batchResults" class="response-body" style="max-height:300px;">Results will appear here...</div>
+      </div>
+    </div>
+
+    <!-- GET Routes Tab -->
+    <div class="tab-content hidden" id="get-routes-tab">
+      <div class="card-header" style="margin-bottom:16px;">
+        <div class="route-counter">Total: <strong id="getRouteCount">0</strong> GET routes</div>
+        <button class="btn btn-primary btn-small" onclick="testAllGetRoutes()"><i class="fas fa-play"></i> Test All GET Routes</button>
+      </div>
+      <div class="route-list" id="getRouteList"></div>
+      <div class="response-panel hidden" id="getRouteResponse">
+        <div class="response-header"><span id="getRouteResponseTitle">Response</span><button class="btn btn-secondary btn-small" onclick="copyResponse('getRouteResponseBody')"><i class="fas fa-copy"></i> Copy</button></div>
+        <div class="response-body" id="getRouteResponseBody">Select a route to test...</div>
+      </div>
+    </div>
+
+    <!-- POST Routes Tab -->
+    <div class="tab-content hidden" id="post-routes-tab">
+      <div class="card-header" style="margin-bottom:16px;">
+        <div class="route-counter">Total: <strong id="postRouteCount">0</strong> POST routes</div>
+      </div>
+      <div class="route-list" id="postRouteList"></div>
+      <div class="response-panel hidden" id="postRouteResponse">
+        <div class="response-header"><span id="postRouteResponseTitle">Response</span><button class="btn btn-secondary btn-small" onclick="copyResponse('postRouteResponseBody')"><i class="fas fa-copy"></i> Copy</button></div>
+        <div class="response-body" id="postRouteResponseBody">Select a route to test...</div>
+      </div>
+    </div>
+
+    <!-- Admin Tab -->
+    <div class="tab-content hidden" id="admin-tab">
+      <div class="grid">
+        <div class="card"><div class="card-header"><div class="card-title"><i class="fas fa-chart-bar card-icon"></i> Admin Stats</div><button class="btn btn-secondary btn-small" onclick="testRoute('GET','/api/admin/stats','adminStatsResult')"><i class="fas fa-play"></i> Test</button></div><div id="adminStatsResult" class="response-body" style="max-height:200px;">Click Test...</div></div>
+        <div class="card"><div class="card-header"><div class="card-title"><i class="fas fa-robot card-icon"></i> Agent Status</div><button class="btn btn-secondary btn-small" onclick="testRoute('GET','/api/admin/agents-status','agentStatusResult')"><i class="fas fa-play"></i> Test</button></div><div id="agentStatusResult" class="response-body" style="max-height:200px;">Click Test...</div></div>
+        <div class="card"><div class="card-header"><div class="card-title"><i class="fas fa-network-wired card-icon"></i> MCP Connections</div><button class="btn btn-secondary btn-small" onclick="testRoute('GET','/api/admin/mcp-connections','mcpConnResult')"><i class="fas fa-play"></i> Test</button></div><div id="mcpConnResult" class="response-body" style="max-height:200px;">Click Test...</div></div>
+        <div class="card"><div class="card-header"><div class="card-title"><i class="fas fa-gauge-high card-icon"></i> Rate Limits</div><button class="btn btn-secondary btn-small" onclick="testRoute('GET','/api/admin/rate-limits','rateLimitResult')"><i class="fas fa-play"></i> Test</button></div><div id="rateLimitResult" class="response-body" style="max-height:200px;">Click Test...</div></div>
+        <div class="card"><div class="card-header"><div class="card-title"><i class="fas fa-file-code card-icon"></i> SSOT Status</div><button class="btn btn-secondary btn-small" onclick="testRoute('GET','/api/admin/ssot-status','ssotStatusResult')"><i class="fas fa-play"></i> Test</button></div><div id="ssotStatusResult" class="response-body" style="max-height:200px;">Click Test...</div></div>
+        <div class="card"><div class="card-header"><div class="card-title"><i class="fas fa-globe card-icon"></i> Domain Config</div><button class="btn btn-secondary btn-small" onclick="testRoute('GET','/api/domain','domainResult')"><i class="fas fa-play"></i> Test</button></div><div id="domainResult" class="response-body" style="max-height:200px;">Click Test...</div></div>
+      </div>
+    </div>
+
+    <!-- Chat Tab -->
+    <div class="tab-content hidden" id="chat-tab">
+      <div class="grid" style="grid-template-columns:1fr 300px;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-comments card-icon"></i> Chat Tester</div>
+            <select id="chatAgent" class="url-input" style="width:180px;padding:6px 10px;font-size:13px;">
+              <option value="mission">mission (multi-agent)</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;height:450px;">
+            <div id="chatMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;">
+              <div style="color:var(--text-muted);text-align:center;padding:40px;"><i class="fas fa-robot" style="font-size:48px;margin-bottom:12px;display:block;"></i>Select an agent and start chatting...</div>
+            </div>
+            <div style="padding:12px;border-top:1px solid var(--border-color);display:flex;gap:8px;">
+              <input type="text" id="chatInput" class="url-input" placeholder="Type your message..." style="flex:1;" onkeypress="if(event.key==='Enter')sendChatMsg()" />
+              <button class="btn btn-primary" onclick="sendChatMsg()" id="chatSendBtn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-list card-icon"></i> Agents</div></div>
+          <div id="chatAgentList" style="max-height:300px;overflow-y:auto;font-size:13px;color:var(--text-muted);">Loading agents...</div>
+          <div class="card-header" style="margin-top:16px;"><div class="card-title"><i class="fas fa-cube card-icon"></i> Models</div></div>
+          <div id="chatModelList" style="max-height:200px;overflow-y:auto;font-size:13px;color:var(--text-muted);">Loading models...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════
+       CONFIGURATION & STATE
+       ═══════════════════════════════════════════════════════════ */
+    const CACHE_KEY = 'barisal_server_url';
+    const CACHE_EXPIRY_KEY = 'barisal_url_expiry';
+    const CACHE_DURATION_MS = 24 * 60 * 60 * 1000;
+    let SERVER_URL = '';
+    let isConnected = false;
+    let autoRefreshTimer = null;
+
+    /* ═══════════════════════════════════════════════════════════
+       ROUTE DEFINITIONS (from hamba.js)
+       ═══════════════════════════════════════════════════════════ */
+    const GET_ROUTES = [
+      { path:'/', desc:'Main dashboard HTML' },
+      { path:'/health', desc:'Health check' },
+      { path:'/identity', desc:'System identity (domain-aware)' },
+      { path:'/status', desc:'Server status overview' },
+      { path:'/v1/models', desc:'Agent models list (OpenAI format)' },
+      { path:'/api/v0/models', desc:'Agent model list (masked names)' },
+      { path:'/api/v1/models', desc:'All provider models (unmasked)' },
+      { path:'/api/rate-limit', desc:'Rate limit status' },
+      { path:'/api/mcp-clients', desc:'MCP client connections' },
+      { path:'/api/domain', desc:'Domain detection config' },
+      { path:'/api/pusher-config', desc:'Pusher config (safe, no secret)' },
+      { path:'/api/agents', desc:'Agent list with roles' },
+      { path:'/api/admin', desc:'Admin dashboard HTML' },
+      { path:'/api/admin/stats', desc:'Full usage statistics JSON' },
+      { path:'/api/admin/ssot-status', desc:'SSOT auto-generation status' },
+      { path:'/api/admin/agents-status', desc:'Agent usage status' },
+      { path:'/api/admin/mcp-connections', desc:'MCP connections & tools' },
+      { path:'/api/admin/rate-limits', desc:'Rate limit details per domain' },
+      { path:'/api/locks', desc:'Lock logs (debug memory)' },
+      { path:'/api/locks/stats', desc:'Lock statistics' },
+      { path:'/api/normalize-list', desc:'Normalizer info (Haq Mawla)' },
+      { path:'/api/config', desc:'Runtime config (view/update)' },
+      { path:'/api/ssot', desc:'SSOT content (project truth)' },
+      { path:'/api/sessions', desc:'All sessions list' },
+      { path:'/api/verify-session', desc:'Verify session (needs headers)' },
+      { path:'/api/syllabus', desc:'Read syllabus.md content' },
+      { path:'/api/memory', desc:'Read memory.json content' },
+      { path:'/mcp', desc:'List MCP tools' },
+    ];
+
+    const POST_ROUTES = [
+      { path:'/api/rate-limit/reset', desc:'Reset rate limit state', body:'{}' },
+      { path:'/api/normalize', desc:'Test normalizer (Haq Mawla)', body:'{"model":"test","choices":[{"message":{"content":"hello"}}]}' },
+      { path:'/api/config', desc:'Update runtime config', body:'{"logLevel":"DEBUG"}' },
+      { path:'/api/set-working-dir', desc:'Set working directory & generate SSOT', body:'{"directory":"."}' },
+      { path:'/v1/chat/completions', desc:'OpenAI-compatible chat (mission mode)', body:'{"model":"mission","messages":[{"role":"user","content":"Hello"}],"stream":false}' },
+      { path:'/api/mission', desc:'Mission execution (multi-agent)', body:'{"input":"Hello, who are you?"}' },
+      { path:'/api/v1/anti-dote', desc:'Anti-dote type safety chain', body:'{"input":"Hello, test anti-dote"}' },
+      { path:'/mcp', desc:'MCP JSON-RPC 2.0 handler', body:'{"jsonrpc":"2.0","method":"tools/list","id":1}' },
+      { path:'/api/workspace', desc:'Extension workspace path', body:'{"directory":"."}' },
+      { path:'/api/syllabus', desc:'Add syllabus entry', body:'{"topic":"test","content":"test entry"}' },
+    ];
+
+    /* ═══════════════════════════════════════════════════════════
+       URL CACHE MANAGEMENT (24-hour localStorage)
+       ═══════════════════════════════════════════════════════════ */
+    function saveUrlToCache(url) {
+      localStorage.setItem(CACHE_KEY, url);
+      localStorage.setItem(CACHE_EXPIRY_KEY, String(Date.now() + CACHE_DURATION_MS));
+    }
+    function loadUrlFromCache() {
+      const url = localStorage.getItem(CACHE_KEY);
+      const expiry = parseInt(localStorage.getItem(CACHE_EXPIRY_KEY) || '0', 10);
+      if (url && expiry > Date.now()) return url;
+      return null;
+    }
+    function clearCache() {
+      localStorage.removeItem(CACHE_KEY);
+      localStorage.removeItem(CACHE_EXPIRY_KEY);
+      SERVER_URL = ''; isConnected = false;
+      document.getElementById('serverUrl').value = '';
+      updateUrlStatus('disconnected', 'Cache cleared. Enter a new URL.');
+      notify('Cache cleared', 'info');
+    }
+    function getCacheStatus() {
+      const url = localStorage.getItem(CACHE_KEY);
+      const expiry = parseInt(localStorage.getItem(CACHE_EXPIRY_KEY) || '0', 10);
+      if (!url) return null;
+      const remaining = expiry - Date.now();
+      if (remaining <= 0) return { url, expired: true };
+      const h = Math.floor(remaining / 3600000);
+      const m = Math.floor((remaining % 3600000) / 60000);
+      return { url, expired: false, remaining: h + 'h ' + m + 'm left' };
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SERVER CONNECTION
+       ═══════════════════════════════════════════════════════════ */
+    function setUrl(url) { document.getElementById('serverUrl').value = url; }
+
+    async function connectServer() {
+      const inputUrl = document.getElementById('serverUrl').value.trim();
+      if (!inputUrl) { notify('Enter a server URL', 'warning'); return; }
+      SERVER_URL = inputUrl.replace(/\/+$/, '');
+      const btn = document.getElementById('connectBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...'; btn.disabled = true;
+      try {
+        const resp = await fetch(SERVER_URL + '/health', { signal: AbortSignal.timeout(10000) });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        isConnected = true; saveUrlToCache(SERVER_URL);
+        updateUrlStatus('connected', 'Connected to ' + (data.service || 'Mission Barisal') + ' v' + (data.version || '?'));
+        notify('Connected!', 'success');
+        await loadChatAgents(); await loadChatModels();
+        refreshOverview(); startAutoRefresh();
+      } catch (err) {
+        isConnected = false;
+        updateUrlStatus('disconnected', 'Failed: ' + err.message);
+        notify('Connection failed', 'error');
+      } finally { btn.innerHTML = '<i class="fas fa-plug"></i> Connect'; btn.disabled = false; }
+    }
+
+    function updateUrlStatus(type, msg) {
+      const el = document.getElementById('urlStatus');
+      el.className = 'url-status ' + type;
+      const icon = type === 'connected' ? 'fa-circle-check' : type === 'cached' ? 'fa-clock' : 'fa-circle-xmark';
+      el.innerHTML = '<i class="fas ' + icon + '"></i> <span>' + msg + '</span>';
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       API HELPER
+       ═══════════════════════════════════════════════════════════ */
+    async function apiCall(method, path, body) {
+      if (!isConnected || !SERVER_URL) throw new Error('Not connected');
+      const opts = { method, headers: { 'Content-Type': 'application/json' } };
+      if (body && method !== 'GET') opts.body = typeof body === 'string' ? body : JSON.stringify(body);
+      const resp = await fetch(SERVER_URL + path, opts);
+      const ct = resp.headers.get('content-type') || '';
+      if (ct.includes('text/html')) return { _html: true, status: resp.status, text: await resp.text() };
+      return { status: resp.status, data: await resp.json() };
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       TEST SINGLE ROUTE
+       ═══════════════════════════════════════════════════════════ */
+    async function testRoute(method, path, targetId) {
+      if (!isConnected) { notify('Not connected', 'warning'); return; }
+      const t0 = Date.now();
+      let el = targetId ? document.getElementById(targetId) : null;
+      if (el) { el.className = 'response-body loading'; el.textContent = 'Testing ' + method + ' ' + path + '...'; }
+      try {
+        let body = null;
+        if (method === 'POST') { const r = POST_ROUTES.find(x => x.path === path); body = r ? r.body : '{}'; }
+        const result = await apiCall(method, path, body);
+        const ms = Date.now() - t0;
+        let display;
+        if (result._html) display = '[HTML] Status:' + result.status + ' | ' + result.text.length + ' chars | ' + ms + 'ms';
+        else { display = JSON.stringify(result.data, null, 2) + '\n\n--- Status: ' + result.status + ' | Time: ' + ms + 'ms ---'; }
+        if (el) { el.className = 'response-body'; el.textContent = display; }
+        return { path: path, status: result.status || 200, elapsed: ms, ok: true };
+      } catch (err) {
+        const ms = Date.now() - t0;
+        if (el) { el.className = 'response-body error'; el.textContent = 'ERROR: ' + err.message + '\nTime: ' + ms + 'ms'; }
+        return { path: path, status: 0, elapsed: ms, ok: false, error: err.message };
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       TEST ALL GET ROUTES
+       ═══════════════════════════════════════════════════════════ */
+    async function testAllGetRoutes() {
+      if (!isConnected) { notify('Not connected', 'warning'); return; }
+      const b = document.getElementById('batchResults');
+      if (b) { b.className = 'response-body loading'; b.textContent = 'Testing all GET routes...\n\n'; }
+      const results = [];
+      for (const r of GET_ROUTES) {
+        if (b) b.textContent += 'Testing ' + r.path + '...';
+        const res = await testRoute('GET', r.path);
+        results.push(Object.assign(res, { desc: r.desc }));
+        if (b) { b.textContent = b.textContent.replace('Testing ' + r.path + '...', ''); b.textContent += '  ' + (res.ok ? '✅' : '❌') + ' ' + res.status + ' (' + res.elapsed + 'ms)\n'; }
+      }
+      const pass = results.filter(r => r.ok).length;
+      const fail = results.filter(r => !r.ok).length;
+      if (b) { b.textContent += '\n══════════════════════════════════════\nTotal: ' + results.length + ' | Passed: ' + pass + ' | Failed: ' + fail + '\n'; b.className = 'response-body'; }
+      notify('Tested ' + results.length + ': ' + pass + ' passed, ' + fail + ' failed', pass === results.length ? 'success' : 'warning');
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       OVERVIEW REFRESH
+       ═══════════════════════════════════════════════════════════ */
+    async function refreshOverview() {
+      if (!isConnected) return;
+      try {
+        const [health, status] = await Promise.all([apiCall('GET', '/health'), apiCall('GET', '/status')]);
+        if (health.data) { document.getElementById('statStatus').textContent = '✅'; document.getElementById('statVersion').textContent = health.data.version || '—'; }
+        if (status.data) {
+          const u = status.data.uptime || 0;
+          const h = Math.floor(u / 3600), m = Math.floor((u % 3600) / 60);
+          document.getElementById('statUptime').textContent = h > 0 ? h + 'h ' + m + 'm' : m + 'm';
+          document.getElementById('statRequests').textContent = (status.data.stats || {}).totalRequests || '—';
+          document.getElementById('statAgents').textContent = (status.data.stats || {}).agents || '—';
+          document.getElementById('statSessions').textContent = (status.data.stats || {}).sessions || '—';
+        }
+        document.getElementById('lastRefreshTime').textContent = new Date().toLocaleTimeString();
+      } catch (e) {}
+    }
+    function startAutoRefresh() {
+      if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+      autoRefreshTimer = setInterval(function() { if (isConnected) refreshOverview(); }, 15000);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       TAB MANAGEMENT
+       ═══════════════════════════════════════════════════════════ */
+    function showTab(name) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+      var tc = document.getElementById(name + '-tab'); if (tc) tc.classList.remove('hidden');
+      var tb = document.querySelector('.tab[data-tab="' + name + '"]'); if (tb) tb.classList.add('active');
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       RENDER ROUTE LISTS
+       ═══════════════════════════════════════════════════════════ */
+    function renderRouteLists() {
+      document.getElementById('getRouteCount').textContent = GET_ROUTES.length;
+      document.getElementById('getRouteList').innerHTML = GET_ROUTES.map(function(r) {
+        return '<div class="route-item"><span class="route-method method-get">GET</span><span class="route-path">' + r.path + '</span><span class="route-desc">' + r.desc + '</span><div class="route-actions"><button class="btn btn-secondary btn-small" onclick="testRouteAndShow(\'GET\',\'' + r.path + '\')"><i class="fas fa-play"></i> Test</button></div></div>';
+      }).join('');
+      document.getElementById('postRouteCount').textContent = POST_ROUTES.length;
+      document.getElementById('postRouteList').innerHTML = POST_ROUTES.map(function(r) {
+        return '<div class="route-item"><span class="route-method method-post">POST</span><span class="route-path">' + r.path + '</span><span class="route-desc">' + r.desc + '</span><div class="route-actions"><button class="btn btn-secondary btn-small" onclick="testRouteAndShow(\'POST\',\'' + r.path + '\')"><i class="fas fa-play"></i> Test</button></div></div>';
+      }).join('');
+    }
+    function testRouteAndShow(method, path) {
+      var isGet = method === 'GET';
+      var panelId = isGet ? 'getRouteResponse' : 'postRouteResponse';
+      var titleId = isGet ? 'getRouteResponseTitle' : 'postRouteResponseTitle';
+      var bodyId = isGet ? 'getRouteResponseBody' : 'postRouteResponseBody';
+      document.getElementById(panelId).classList.remove('hidden');
+      document.getElementById(titleId).textContent = method + ' ' + path;
+      testRoute(method, path, bodyId);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       CHAT
+       ═══════════════════════════════════════════════════════════ */
+    async function loadChatAgents() {
+      try {
+        const r = await apiCall('GET', '/api/agents');
+        if (r.data && r.data.agents) {
+          var sel = document.getElementById('chatAgent');
+          sel.innerHTML = '<option value="mission">mission (multi-agent)</option>';
+          r.data.agents.forEach(function(a) { sel.innerHTML += '<option value="' + a.id + '">' + a.id + ' — ' + a.name + ' (' + a.role + ')</option>'; });
+          document.getElementById('chatAgentList').innerHTML = r.data.agents.map(function(a) {
+            return '<div style="padding:8px;border-bottom:1px solid var(--border-color);"><strong style="color:var(--text-primary);">' + a.name + '</strong> <span class="badge badge-info" style="margin-left:4px;">' + a.role + '</span><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Model: ' + a.model + '</div></div>';
+          }).join('');
+        }
+      } catch (e) {}
+    }
+    async function loadChatModels() {
+      try {
+        const r = await apiCall('GET', '/api/v1/models');
+        if (r.data && r.data.data) {
+          document.getElementById('chatModelList').innerHTML = r.data.data.map(function(m) {
+            return '<div style="padding:6px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;"><span style="color:var(--text-primary);font-family:monospace;font-size:12px;">' + m.id + '</span><span class="badge badge-success" style="font-size:10px;">' + (m.providerName || m.owned_by || '') + '</span></div>';
+          }).join('');
+        }
+      } catch (e) {}
+    }
+    async function sendChatMsg() {
+      var input = document.getElementById('chatInput');
+      var model = document.getElementById('chatAgent').value;
+      var message = input.value.trim();
+      if (!message || !isConnected) return;
+      addChatMsg('user', message); input.value = '';
+      var btn = document.getElementById('chatSendBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; btn.disabled = true;
+      try {
+        var t0 = Date.now();
+        var r = await apiCall('POST', '/v1/chat/completions', { model: model, messages: [{ role: 'user', content: message }], stream: false });
+        var ms = Date.now() - t0;
+        if (r.data && r.data.choices) addChatMsg('assistant', r.data.choices[0].message.content || 'No response', model + ' • ' + ms + 'ms');
+        else if (r.data && r.data.error) addChatMsg('error', r.data.error.message || JSON.stringify(r.data.error));
+        else addChatMsg('assistant', JSON.stringify(r.data, null, 2));
+      } catch (e) { addChatMsg('error', e.message); }
+      finally { btn.innerHTML = '<i class="fas fa-paper-plane"></i>'; btn.disabled = false; }
+    }
+    function addChatMsg(role, text, meta) {
+      var c = document.getElementById('chatMessages');
+      if (c.children.length === 1 && c.children[0].querySelector('.fa-robot')) c.innerHTML = '';
+      var d = document.createElement('div');
+      var isUser = role === 'user', isErr = role === 'error';
+      d.style.cssText = 'max-width:85%;padding:12px 16px;border-radius:12px;align-self:' + (isUser ? 'flex-end' : 'flex-start') + ';background:' + (isUser ? 'var(--accent-primary)' : isErr ? 'var(--accent-danger)' : 'var(--bg-surface)') + ';color:' + (isUser ? 'white' : 'var(--text-primary)') + ';border:1px solid ' + (isUser ? 'transparent' : 'var(--border-color)') + ';font-size:14px;line-height:1.5;word-break:break-word;';
+      var html = '<div style="white-space:pre-wrap;">' + escapeHtml(text) + '</div>';
+      if (meta) html += '<div style="font-size:11px;margin-top:6px;color:' + (isUser ? 'rgba(255,255,255,0.6)' : 'var(--text-muted)') + ';">' + escapeHtml(meta) + '</div>';
+      d.innerHTML = html; c.appendChild(d); c.scrollTop = c.scrollHeight;
+    }
+    function escapeHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    /* ═══════════════════════════════════════════════════════════
+       COPY & NOTIFY
+       ═══════════════════════════════════════════════════════════ */
+    function copyResponse(id) { var el = document.getElementById(id); if (el) navigator.clipboard.writeText(el.textContent).then(function() { notify('Copied', 'info'); }); }
+    function notify(msg, type) {
+      var n = document.createElement('div'); n.className = 'notification ' + (type || 'info');
+      var icon = type === 'error' ? 'fa-times-circle' : type === 'success' ? 'fa-check-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+      n.innerHTML = '<i class="fas ' + icon + '"></i> <span style="flex:1;">' + msg + '</span><button onclick="this.parentElement.remove()" style="background:none;border:none;color:inherit;cursor:pointer;"><i class="fas fa-times"></i></button>';
+      document.body.appendChild(n); setTimeout(function() { if (n.parentElement) n.remove(); }, 4000);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       INIT
+       ═══════════════════════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', function() {
+      renderRouteLists();
+      
+      // Auto-detect: if served from the server itself (via /admin-test), use current origin
+      if (window.location.protocol !== 'file:' && window.location.pathname.includes('/admin-test')) {
+        var origin = window.location.origin;
+        document.getElementById('serverUrl').value = origin + '/v1';
+        updateUrlStatus('cached', 'Auto-detected: ' + origin);
+        connectServer();
+      } else {
+        var cached = loadUrlFromCache();
+        if (cached) {
+          document.getElementById('serverUrl').value = cached;
+          var cs = getCacheStatus();
+          if (cs && !cs.expired) { updateUrlStatus('cached', 'Cached: ' + cached + ' (' + cs.remaining + ')'); connectServer(); }
+        }
+      }
+      document.getElementById('refreshAll').addEventListener('click', function() { if (isConnected) { refreshOverview(); notify('Refreshed', 'info'); } });
+    });
+  </script>
+</body>
+</html>

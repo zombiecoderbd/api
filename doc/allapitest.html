@@ -1,0 +1,2089 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📚 Mission Barisal — Complete API Tester & Docs</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --bg2: #111827;
+      --bg3: #1e293b;
+      --bg4: #1a2332;
+      --t1: #f1f5f9;
+      --t2: #94a3b8;
+      --t3: #64748b;
+      --blue: #3b82f6;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --purple: #8b5cf6;
+      --cyan: #06b6d4;
+      --pink: #ec4899;
+      --border: #1e293b;
+      --border2: #334155;
+      --r: 10px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--t1);
+      line-height: 1.6;
+    }
+
+    .wrap {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    .hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hdr h1 {
+      font-size: 24px;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hdr p {
+      color: var(--t3);
+      font-size: 13px;
+    }
+
+    /* URL Bar */
+    .urlbar {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: var(--r);
+      padding: 14px;
+      margin-bottom: 20px;
+    }
+
+    .urlbar h2 {
+      font-size: 15px;
+      margin-bottom: 8px;
+      color: var(--cyan);
+    }
+
+    .urlrow {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .urlrow input {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 14px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      color: var(--t1);
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    .urlrow input:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+
+    .presets {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .preset {
+      padding: 4px 10px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      color: var(--t2);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .preset:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .urlstatus {
+      margin-top: 6px;
+      font-size: 12px;
+    }
+
+    .urlstatus.ok {
+      color: var(--green);
+    }
+
+    .urlstatus.err {
+      color: var(--red);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .2s;
+    }
+
+    .btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .b-blue {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .b-green {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .b-red {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .b-gray {
+      background: var(--bg3);
+      color: var(--t1);
+      border: 1px solid var(--border2);
+    }
+
+    .b-sm {
+      padding: 5px 10px;
+      font-size: 11px;
+    }
+
+    .b-purple {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    .b-purple:hover {
+      filter: brightness(1.15);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .b-get {
+      background: rgba(16, 185, 129, .15);
+      color: var(--green);
+    }
+
+    .b-post {
+      background: rgba(59, 130, 246, .15);
+      color: var(--blue);
+    }
+
+    .b-ok {
+      background: rgba(16, 185, 129, .15);
+      color: var(--green);
+    }
+
+    .b-err {
+      background: rgba(239, 68, 68, .15);
+      color: var(--red);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 2px;
+      background: var(--bg3);
+      border-radius: 6px;
+      padding: 3px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 8px 12px;
+      text-align: center;
+      background: transparent;
+      border: none;
+      color: var(--t3);
+      font-weight: 500;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 13px;
+      min-width: 70px;
+    }
+
+    .tab.on {
+      background: var(--bg2);
+      color: var(--t1);
+    }
+
+    /* Panels */
+    .panel {
+      display: none;
+    }
+
+    .panel.on {
+      display: block;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .card h3 {
+      font-size: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Route Row */
+    .rt {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+      transition: border-color .2s;
+    }
+
+    .rt:hover {
+      border-color: var(--blue);
+    }
+
+    .rt .method {
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      min-width: 44px;
+      text-align: center;
+    }
+
+    .rt .path {
+      font-family: monospace;
+      font-size: 12px;
+      flex: 1;
+    }
+
+    .rt .desc {
+      font-size: 11px;
+      color: var(--t3);
+      max-width: 250px;
+    }
+
+    /* Response */
+    .resp {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .resp-hdr {
+      padding: 8px 12px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .resp-body {
+      padding: 12px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 350px;
+      overflow-y: auto;
+      color: var(--green);
+      line-height: 1.5;
+    }
+
+    .resp-body.err {
+      color: var(--red);
+    }
+
+    .resp-body.load {
+      color: var(--yellow);
+    }
+
+    /* Doc Accordion */
+    .acc {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    .acc-hdr {
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background .2s;
+    }
+
+    .acc-hdr:hover {
+      background: var(--bg3);
+    }
+
+    .acc-hdr .arrow {
+      transition: transform .2s;
+    }
+
+    .acc.open .acc-hdr .arrow {
+      transform: rotate(90deg);
+    }
+
+    .acc-body {
+      display: none;
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--t2);
+      line-height: 1.8;
+    }
+
+    .acc.open .acc-body {
+      display: block;
+    }
+
+    .acc-body pre {
+      background: var(--bg);
+      padding: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 12px;
+      color: var(--green);
+      margin: 8px 0;
+      border: 1px solid var(--border);
+    }
+
+    .acc-body code {
+      font-family: monospace;
+      background: var(--bg3);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+
+    .acc-body h4 {
+      color: var(--cyan);
+      margin: 12px 0 6px;
+      font-size: 13px;
+    }
+
+    .acc-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0;
+      font-size: 12px;
+    }
+
+    .acc-body th,
+    .acc-body td {
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .acc-body th {
+      background: var(--bg3);
+      color: var(--t2);
+    }
+
+    /* Chat */
+    .chatbox {
+      display: flex;
+      flex-direction: column;
+      height: 420px;
+    }
+
+    .chatmsgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chatinp {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .chatinp input {
+      flex: 1;
+      padding: 8px 12px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      color: var(--t1);
+      font-size: 13px;
+    }
+
+    .chatinp input:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+
+    .msg {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .msg-u {
+      align-self: flex-end;
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .msg-a {
+      align-self: flex-start;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+    }
+
+    .msg-e {
+      align-self: flex-start;
+      background: rgba(239, 68, 68, .15);
+      border: 1px solid rgba(239, 68, 68, .3);
+      color: var(--red);
+    }
+
+    .msg small {
+      display: block;
+      margin-top: 4px;
+      font-size: 10px;
+      opacity: .6;
+    }
+
+    /* Stats Row */
+    .srow {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .si {
+      background: var(--bg3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: center;
+      flex: 1;
+      min-width: 100px;
+    }
+
+    .si .v {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    .si .l {
+      font-size: 10px;
+      color: var(--t3);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .mt {
+      margin-top: 12px;
+    }
+
+    .mb {
+      margin-bottom: 12px;
+    }
+
+    /* Notification */
+    .notif {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .4);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 250px;
+      animation: slIn .3s;
+      font-size: 13px;
+    }
+
+    .notif.ok {
+      background: #064e3b;
+      color: #fff;
+    }
+
+    .notif.err {
+      background: #7f1d1d;
+      color: #fff;
+    }
+
+    .notif.info {
+      background: var(--bg3);
+      color: var(--t1);
+    }
+
+    @keyframes slIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg3);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 3px;
+    }
+
+    @media(max-width:768px) {
+      .wrap {
+        padding: 10px;
+      }
+
+      .hdr {
+        flex-direction: column;
+      }
+
+      .urlrow {
+        flex-direction: column;
+      }
+
+      .tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+      }
+
+      .tab {
+        min-width: 70px;
+        white-space: nowrap;
+      }
+
+      .rt .desc {
+        display: none;
+      }
+
+      .msg {
+        max-width: 95%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <!-- Header -->
+    <div class="hdr">
+      <div>
+        <h1><i class="fas fa-book"></i> Mission Barisal — API Tester & Docs</h1>
+        <p>All endpoints, MCP chat completion, SSE streaming, tool usage — test & learn</p>
+      </div>
+      <button class="btn b-gray" onclick="location.reload()"><i class="fas fa-sync"></i> Reload</button>
+    </div>
+
+    <!-- URL Config -->
+    <div class="urlbar">
+      <h2><i class="fas fa-link"></i> Server URL</h2>
+      <div class="urlrow">
+        <input id="url" placeholder="http://localhost:5010 or https://m.skilltoearn.org" spellcheck="false">
+        <button class="btn b-blue" id="connBtn" onclick="connect()"><i class="fas fa-plug"></i> Connect</button>
+        <button class="btn b-red b-sm" onclick="clearUrl()"><i class="fas fa-trash"></i></button>
+      </div>
+      <div class="presets">
+        <span style="font-size:11px;color:var(--t3);">Presets:</span>
+        <button class="preset" onclick="P('http://localhost:5010')">localhost:5010</button>
+        <button class="preset" onclick="P('http://localhost:5000')">localhost:5000</button>
+        <button class="preset" onclick="P('https://sahon.selfsmartearning.com/v1')">sahon (remote)</button>
+        <button class="preset" onclick="P('https://admin.selfsmartearning.com')">selfsmartearning</button>
+        <button class="preset" onclick="P('https://m.skilltoearn.org')">skilltoearn</button>
+        <button class="preset" onclick="P('https://chat.kopalearning.com')">kopalearning</button>
+      </div>
+      <div class="urlstatus err" id="urlSt"><i class="fas fa-circle-xmark"></i> Not connected</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab" data-t="overview" onclick="stab('overview')"><i class="fas fa-chart-pie"></i>
+        Overview</button>
+      <button class="tab" data-t="get" onclick="stab('get')"><i class="fas fa-arrow-down"></i> GET</button>
+      <button class="tab" data-t="post" onclick="stab('post')"><i class="fas fa-arrow-up"></i> POST</button>
+      <button class="tab" data-t="custom" onclick="stab('custom')"><i class="fas fa-flask"></i> Custom</button>
+      <button class="tab" data-t="chat" onclick="stab('chat')"><i class="fas fa-comments"></i> Chat</button>
+      <button class="tab" data-t="docs" onclick="stab('docs')"><i class="fas fa-book"></i> Docs</button>
+    </div>
+
+    <!-- ═══ OVERVIEW ═══ -->
+    <div class="panel on" id="p-overview">
+      <div class="srow">
+        <div class="si">
+          <div class="v" id="sStat">—</div>
+          <div class="l">Status</div>
+        </div>
+        <div class="si">
+          <div class="v" id="sVer">—</div>
+          <div class="l">Version</div>
+        </div>
+        <div class="si">
+          <div class="v" id="sUp">—</div>
+          <div class="l">Uptime</div>
+        </div>
+        <div class="si">
+          <div class="v" id="sReq">—</div>
+          <div class="l">Requests</div>
+        </div>
+        <div class="si">
+          <div class="v" id="sAg">—</div>
+          <div class="l">Agents</div>
+        </div>
+        <div class="si">
+          <div class="v" id="sSes">—</div>
+          <div class="l">Sessions</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button class="btn b-blue b-sm" onclick="quickTest('/health','ovHealth')"><i class="fas fa-heart-pulse"></i>
+          Health</button>
+        <button class="btn b-blue b-sm" onclick="quickTest('/identity','ovIdent')"><i class="fas fa-id-card"></i>
+          Identity</button>
+        <button class="btn b-blue b-sm" onclick="quickTest('/status','ovStatus')"><i class="fas fa-signal"></i>
+          Status</button>
+        <button class="btn b-blue b-sm" onclick="quickTest('/v1/models','ovModels')"><i class="fas fa-cube"></i>
+          Models</button>
+        <button class="btn b-blue b-sm" onclick="quickTest('/api/agents','ovAgents')"><i class="fas fa-robot"></i>
+          Agents</button>
+        <button class="btn b-green b-sm" onclick="testAll()"><i class="fas fa-play"></i> Test All GET</button>
+      </div>
+      <div class="resp">
+        <div class="resp-hdr"><span>Overview Results</span></div>
+        <div class="resp-body" id="ovResults">Click a button above to test...</div>
+      </div>
+    </div>
+
+    <!-- ═══ CUSTOM REQUEST TESTER ═══ -->
+    <div class="panel" id="p-custom">
+      <div class="card">
+        <h3><i class="fas fa-flask" style="color:var(--purple)"></i> Custom Request Tester</h3>
+        <p style="font-size:12px;color:var(--t3);margin-bottom:12px;">Enter any endpoint path + method to test. Leave
+          BASE URL empty to use the connected server.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <select id="cMethod"
+            style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);font-size:13px;min-width:80px;">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+            <option value="PATCH">PATCH</option>
+          </select>
+          <input id="cPath" placeholder="/api/sessions/search?q=test or /health" spellcheck="false"
+            style="flex:1;min-width:200px;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);font-family:monospace;font-size:13px;">
+          <input id="cBaseUrl" placeholder="Override base URL (optional)" spellcheck="false"
+            style="flex:1;min-width:200px;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t2);font-family:monospace;font-size:12px;">
+          <button class="btn b-purple" id="cSendBtn" onclick="sendCustom()"><i class="fas fa-paper-plane"></i>
+            Send</button>
+        </div>
+        <div id="cBodyRow" style="display:none;margin-bottom:8px;">
+          <textarea id="cBody" rows="4" placeholder='Request body (JSON) — e.g. {"input":"Hello"}' spellcheck="false"
+            style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);font-family:monospace;font-size:12px;resize:vertical;"></textarea>
+        </div>
+        <div class="resp" id="cResp">
+          <div class="resp-hdr">
+            <span id="cRespT">Response</span>
+            <span id="cRespMeta" style="font-size:11px;color:var(--t3);"></span>
+            <div style="display:flex;gap:4px;">
+              <button class="btn b-gray b-sm" onclick="copyRespText()"><i class="fas fa-copy"></i></button>
+              <button class="btn b-gray b-sm" onclick="clearCustom()"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          <div class="resp-body" id="cRespB">Enter a path and click Send...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ GET ROUTES ═══ -->
+    <div class="panel" id="p-get">
+      <div
+        style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <span style="font-size:13px;color:var(--t3);">Total: <strong id="getCnt">0</strong> GET routes</span>
+        <button class="btn b-green b-sm" onclick="testAll()"><i class="fas fa-play"></i> Test All</button>
+      </div>
+      <div id="getRts"></div>
+      <div class="resp hidden" id="getResp">
+        <div class="resp-hdr"><span id="getRespT">Response</span><button class="btn b-gray b-sm"
+            onclick="cp('getRespB')"><i class="fas fa-copy"></i></button></div>
+        <div class="resp-body" id="getRespB"></div>
+      </div>
+    </div>
+
+    <!-- ═══ POST ROUTES ═══ -->
+    <div class="panel" id="p-post">
+      <div style="margin-bottom:12px;"><span style="font-size:13px;color:var(--t3);">Total: <strong
+            id="postCnt">0</strong> POST routes</span></div>
+      <div id="postRts"></div>
+      <div class="resp hidden" id="postResp">
+        <div class="resp-hdr"><span id="postRespT">Response</span><button class="btn b-gray b-sm"
+            onclick="cp('postRespB')"><i class="fas fa-copy"></i></button></div>
+        <div class="resp-body" id="postRespB"></div>
+      </div>
+    </div>
+
+    <!-- ═══ CHAT ═══ -->
+    <div class="panel" id="p-chat">
+      <div class="card">
+        <h3><i class="fas fa-comments" style="color:var(--blue)"></i> Chat Tester</h3>
+        <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+          <select id="chatAgent"
+            style="padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);font-size:12px;min-width:160px;">
+            <option value="mission">mission (multi-agent)</option>
+          </select>
+          <select id="chatMode"
+            style="padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--t1);font-size:12px;">
+            <option value="chat">POST /v1/chat/completions</option>
+            <option value="mission">POST /api/mission</option>
+            <option value="antidote">POST /api/v1/anti-dote</option>
+          </select>
+          <label style="font-size:12px;color:var(--t3);display:flex;align-items:center;gap:4px;">
+            <input type="checkbox" id="chatStream"> Stream (SSE)
+          </label>
+        </div>
+        <div class="chatbox">
+          <div class="chatmsgs" id="chatMsgs">
+            <div style="color:var(--t3);text-align:center;padding:40px;">
+              <i class="fas fa-robot" style="font-size:40px;margin-bottom:8px;display:block;"></i>
+              Select an agent and start chatting...
+            </div>
+          </div>
+          <div class="chatinp">
+            <input id="chatIn" placeholder="Type your message..." onkeypress="if(event.key==='Enter')sendMsg()">
+            <button class="btn b-blue" id="chatBtn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ DOCS ═══ -->
+    <div class="panel" id="p-docs">
+      <div class="srow mb">
+        <div class="si">
+          <div class="v" style="font-size:16px;">30</div>
+          <div class="l">GET Routes</div>
+        </div>
+        <div class="si">
+          <div class="v" style="font-size:16px;">10</div>
+          <div class="l">POST Routes</div>
+        </div>
+        <div class="si">
+          <div class="v" style="font-size:16px;">1</div>
+          <div class="l">WebSocket</div>
+        </div>
+        <div class="si">
+          <div class="v" style="font-size:16px;">3</div>
+          <div class="l">Providers</div>
+        </div>
+      </div>
+
+      <!-- Doc: Quick Start -->
+      <div class="acc" onclick="this.classList.toggle('open')">
+        <div class="acc-hdr"><span><i class="fas fa-rocket" style="color:var(--green);"></i> Quick Start — Connect &
+            Test</span><span class="arrow">▶</span></div>
+        <div class="acc-body">
+          <h4>1. Enter Server URL</h4>
+          <p>Type your server URL in the top bar. Supports any server running Mission Barisal:</p>
+          <ul style="padding-left:20px;margin:6px 0;">
+            <li><code>http://localhost:5010</code> — Local development server (port 5010)</li>
+            <li><code>http://localhost:5000</code> — Alternative local server (port 5000)</li>
+            <li><code>https://m.skilltoearn.org</code> — Production server</li>
+            <li><code>https://admin.selfsmartearning.com</code> — Admin server</li>
+          </ul>
+          <h4>2. Click Connect</h4>
+          <p>The URL is saved to localStorage for <strong>24 hours</strong>. Auto-connects on page reload.</p>
+          <h4>3. Test Endpoints</h4>
+          <p>Switch to GET/POST tabs, click <strong>Test</strong> on any route. Response appears below.</p>
+          <h4>4. Chat with Agents</h4>
+          <p>Go to Chat tab → select agent → type message → get real-time response with streaming support.</p>
+        </div>
+      </div>
+
+      <!-- Doc: All GET Routes -->
+      <div class="acc" onclick="this.classList.toggle('open')">
+        <div class="acc-hdr"><span><i class="fas fa-arrow-down" style="color:var(--green);"></i> All GET Routes (30
+            endpoints)</span><span class="arrow">▶</span></div>
+        <div class="acc-body">
+          <table>
+            <tr>
+              <th>Route</th>
+              <th>Description</th>
+              <th>Auth</th>
+            </tr>
+            <tr>
+              <td><code>GET /</code></td>
+              <td>Main dashboard HTML page</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /health</code></td>
+              <td>Health check — uptime, port, version</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /identity</code></td>
+              <td>System identity (domain-aware)</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /status</code></td>
+              <td>Server status overview with agent list</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /v1/models</code></td>
+              <td>Agent models list (OpenAI-compatible format)</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/v0/models</code></td>
+              <td>Agent model list (masked names)</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/v1/models</code></td>
+              <td>All provider models (unmasked, real API names)</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/rate-limit</code></td>
+              <td>Rate limit status</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/mcp-clients</code></td>
+              <td>MCP client connections & tools</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/clients</code></td>
+              <td>Client list HTML page</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/domain</code></td>
+              <td>Domain detection config</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/pusher-config</code></td>
+              <td>Pusher config (safe, no secret)</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/agents</code></td>
+              <td>Agent list with roles & models</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/admin</code></td>
+              <td>Admin dashboard (HTML)</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/admin/stats</code></td>
+              <td>Full usage statistics JSON</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/admin/ssot-status</code></td>
+              <td>SSOT auto-generation status</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/admin/agents-status</code></td>
+              <td>Agent usage status</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/admin/mcp-connections</code></td>
+              <td>MCP connections & tool usage</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/admin/rate-limits</code></td>
+              <td>Rate limit details per domain</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/locks</code></td>
+              <td>Lock logs (debug memory)</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/locks/stats</code></td>
+              <td>Lock statistics</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/normalize-list</code></td>
+              <td>Normalizer info (Haq Mawla)</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/config</code></td>
+              <td>Runtime config view</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/ssot</code></td>
+              <td>SSOT content (project truth)</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/sessions</code></td>
+              <td>All sessions list</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/sessions/search</code></td>
+              <td>Search sessions by query</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/verify-session</code></td>
+              <td>Verify session (needs x-session-id header)</td>
+              <td>Headers</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/syllabus</code></td>
+              <td>Read syllabus.md content</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/memory</code></td>
+              <td>Read memory.json content</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><code>GET /mcp</code></td>
+              <td>List MCP tools</td>
+              <td>No</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Doc: All POST Routes -->
+      <div class="acc" onclick="this.classList.toggle('open')">
+        <div class="acc-hdr"><span><i class="fas fa-arrow-up" style="color:var(--blue);"></i> All POST Routes (10
+            endpoints)</span><span class="arrow">▶</span></div>
+        <div class="acc-body">
+          <table>
+            <tr>
+              <th>Route</th>
+              <th>Description</th>
+              <th>Body</th>
+            </tr>
+            <tr>
+              <td><code>POST /api/rate-limit/reset</code></td>
+              <td>Reset rate limit state</td>
+              <td><code>{}</code></td>
+            </tr>
+            <tr>
+              <td><code>POST /api/normalize</code></td>
+              <td>Test normalizer (Haq Mawla)</td>
+              <td>Raw AI response</td>
+            </tr>
+            <tr>
+              <td><code>POST /api/config</code></td>
+              <td>Update runtime config</td>
+              <td><code>{"logLevel":"DEBUG"}</code></td>
+            </tr>
+            <tr>
+              <td><code>POST /api/set-working-dir</code></td>
+              <td>Set working directory & generate SSOT</td>
+              <td><code>{"directory":"."}</code></td>
+            </tr>
+            <tr>
+              <td><code>POST /v1/chat/completions</code></td>
+              <td>OpenAI-compatible chat (main endpoint)</td>
+              <td>OpenAI format</td>
+            </tr>
+            <tr>
+              <td><code>POST /api/mission</code></td>
+              <td>Mission execution (multi-agent)</td>
+              <td><code>{"input":"..."}</code></td>
+            </tr>
+            <tr>
+              <td><code>POST /api/v1/anti-dote</code></td>
+              <td>Anti-dote type safety chain</td>
+              <td><code>{"input":"..."}</code></td>
+            </tr>
+            <tr>
+              <td><code>POST /mcp</code></td>
+              <td>MCP JSON-RPC 2.0 handler</td>
+              <td>JSON-RPC body</td>
+            </tr>
+            <tr>
+              <td><code>POST /api/workspace</code></td>
+              <td>Extension workspace path</td>
+              <td><code>{"directory":"."}</code></td>
+            </tr>
+            <tr>
+              <td><code>POST /api/syllabus</code></td>
+              <td>Add syllabus entry</td>
+              <td><code>{"topic":"...","content":"..."}</code></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Doc: MCP Chat Completion -->
+      <div class="acc" onclick="this.classList.toggle('open')">
+        <div class="acc-hdr"><span><i class="fas fa-comments" style="color:var(--purple);"></i> MCP Chat Completion —
+            POST /v1/chat/completions</span><span class="arrow">▶</span></div>
+        <div class="acc-body">
+          <h4>OpenAI-Compatible Chat API</h4>
+          <p>The main chat endpoint. Supports <strong>mission mode</strong> (multi-agent), <strong>single agent
+              mode</strong>, and <strong>proxy mode</strong> (direct provider passthrough).</p>
+
+          <h4>Request Format</h4>
+          <pre>{
+  "model": "mission",          // "mission" | agent_id | provider_model_name
+  "messages": [
+    { "role": "user", "content": "Hello, who are you?" }
+  ],
+  "stream": false,             // true for SSE streaming
+  "temperature": 0.7,
+  "session_id": "optional",    // reuse existing session
+  "client_id": "my-client",    // client identifier
+  "editor": "vscode",          // editor name
+  "project_context": "...",    // optional SSOT content
+  "tools": [                   // optional MCP tools
+    {
+      "type": "function",
+      "function": {
+        "name": "read_file",
+        "description": "Read a file",
+        "parameters": {
+          "type": "object",
+          "properties": { "path": { "type": "string" } },
+          "required": ["path"]
+        }
+      }
+    }
+  ]
+}</pre>
+
+          <h4>Model Routing</h4>
+          <table>
+            <tr>
+              <th>model value</th>
+              <th>Behavior</th>
+            </tr>
+            <tr>
+              <td><code>"mission"</code></td>
+              <td>Multi-agent mission mode — routes to all 6 agents, merges results</td>
+            </tr>
+            <tr>
+              <td><code>"code-guru"</code></td>
+              <td>Single agent mode — runs only that agent with its persona</td>
+            </tr>
+            <tr>
+              <td><code>"deepseek-v4-flash-free"</code></td>
+              <td>Proxy mode — direct passthrough to provider (OpenCode → Groq → Gemini fallback)</td>
+            </tr>
+          </table>
+
+          <h4>Response (Non-streaming)</h4>
+          <pre>{
+  "id": "chatcmpl-abc123",
+  "object": "chat.completion",
+  "created": 1720000000,
+  "model": "mission",
+  "choices": [{
+    "index": 0,
+    "message": { "role": "assistant", "content": "..." },
+    "finish_reason": "stop"
+  }],
+  "usage": { "prompt_tokens": 42, "completion_tokens": 128, "total_tokens": 170 },
+  "session_id": "sess-abc123",
+  "conversation_id": "conv-abc123"
+}</pre>
+
+          <h4>Response (Streaming — SSE)</h4>
+          <pre>data: {"id":"chatcmpl-abc","object":"chat.completion.chunk","model":"mission","choices":[{"index":0,"delta":{"content":""},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-abc","object":"chat.completion.chunk","model":"mission","choices":[{"index":0,"delta":{"content":"Hello"},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-abc","object":"chat.completion.chunk","model":"mission","choices":[{"index":0,"delta":{"content":" world"},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-abc","object":"chat.completion.chunk","model":"mission","choices":[{"index":0,"delta":{"content":""},"finish_reason":"stop"}]}
+
+data: [DONE]</pre>
+
+          <h4>Mission Mode Streaming Events</h4>
+          <p>When <code>model: "mission"</code> + <code>stream: true</code>, the server sends progress events:</p>
+          <pre>[mission-start] Starting multi-agent mission...
+[thinking] code-guru: Analyzing user intent...
+[agent-working] bug-hunter: Scanning for issues...
+[agent-done] security: Review complete
+[phase-skip] performance: Skipped (not needed)
+[phase3] Merging agent outputs...
+[phase3-done] Final output ready
+[content] Combined response from all agents...</pre>
+
+          <h4>cURL Examples</h4>
+          <pre># Non-streaming
+curl -X POST http://localhost:5010/v1/chat/completions \\
+  -H "Content-Type: application/json" \\
+  -d '{"model":"mission","messages":[{"role":"user","content":"Hello"}],"stream":false}'
+
+# Streaming
+curl -X POST http://localhost:5010/v1/chat/completions \\
+  -H "Content-Type: application/json" \\
+  -d '{"model":"mission","messages":[{"role":"user","content":"Hello"}],"stream":true}'
+
+# Single agent
+curl -X POST http://localhost:5010/v1/chat/completions \\
+  -H "Content-Type: application/json" \\
+  -d '{"model":"code-guru","messages":[{"role":"user","content":"Explain this code"}]}'
+
+# Direct model (proxy)
+curl -X POST http://localhost:5010/v1/chat/completions \\
+  -H "Content-Type: application/json" \\
+  -d '{"model":"deepseek-v4-flash-free","messages":[{"role":"user","content":"Hello"}]}'</pre>
+        </div>
+      </div>
+
+      <!-- Doc: SSE Streaming -->
+      <div class="acc" onclick="this.classList.toggle('open')">
+        <div class="acc-hdr"><span><i class="fas fa-bolt" style="color:var(--yellow);"></i> SSE Streaming — Real-time
+            Response</span><span class="arrow">▶</span></div>
+        <div class="acc-body">
+          <h4>How SSE Works</h4>
+          <p>Server-Sent Events (SSE) provide real-time streaming of AI responses. Instead of waiting for the full
+            response, tokens arrive one by one.</p>
+
+          <h4>Headers Required</h4>
+          <pre>Content-Type: text/event-stream
+Cache-Control: no-cache
+Connection: keep-alive</pre>
+
+          <h4>Stream Chunk Format</h4>
+          <p>Each chunk follows OpenAI's format:</p>
+          <pre>{
+  "id": "chatcmpl-uuid",
+  "object": "chat.completion.chunk",
+  "created": 1720000000,
+  "model": "mission",
+  "choices": [{
+    "index": 0,
+    "delta": {
+      "content": "token text here"    // The actual text chunk
+      // OR
+      "tool_calls": [...]            // Tool call (if agent uses tools)
+    },
+    "finish_reason": null            // "stop" on final chunk
+  }]
+}</pre>
+
+          <h4>JavaScript Client (Fetch API)</h4>
+          <pre>async function streamChat(message, model) {
+  const response = await fetch('/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: model || 'mission',
+      messages: [{ role: 'user', content: message }],
+      stream: true
+    })
+  });
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let fullText = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const chunk = decoder.decode(value);
+    const lines = chunk.split('\\n');
+
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        const data = line.slice(6);
+        if (data === '[DONE]') break;
+        try {
+          const parsed = JSON.parse(data);
+          const token = parsed.choices?.[0]?.delta?.content || '';
+          fullText += token;
+          // Update UI with fullText
+        } catch (e) {}
+      }
+    }
+  }
+  return fullText;
+}</pre>
+
+          <h4>Event Types (Mission Mode)</h4>
+          <table>
+            <tr>
+              <th>Event</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td><code>mission_start</code></td>
+              <td>Mission has started</td>
+            </tr>
+            <tr>
+              <td><code>log</code></td>
+              <td>Server log message</td>
+            </tr>
+            <tr>
+              <td><code>agent_status</code></td>
+              <td>Agent status change (working/done)</td>
+            </tr>
+            <tr>
+              <td><code>output</code></td>
+              <td>Agent output token</td>
+            </tr>
+            <tr>
+              <td><code>progress</code></td>
+              <td>Progress update (phase, agent_id)</td>
+            </tr>
+            <tr>
+              <td><code>mission_done</code></td>
+              <td>Final result with combined output</td>
+            </tr>
+          </table>
+
+          <h4>Browser Compatibility</h4>
+          <ul style="padding-left:20px;">
+            <li>Chrome 90+ ✅</li>
+            <li>Firefox 88+ ✅</li>
+            <li>Safari 14+ ✅</li>
+            <li>Edge 90+ ✅</li>
+            <li>Mobile browsers ✅</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Doc: MCP Tools -->
+      <div class="acc" onclick="this.classList.toggle('open')">
+        <div class="acc-hdr"><span><i class="fas fa-wrench" style="color:var(--cyan);"></i> MCP Tools — Tool Calls &
+            Usage</span><span class="arrow">▶</span></div>
+        <div class="acc-body">
+          <h4>What are MCP Tools?</h4>
+          <p>Model Context Protocol (MCP) tools allow agents to call external functions during chat. Tools are defined
+            in <code>MCP_TOOLS</code> in hamba.js and passed as function definitions in the chat request.</p>
+
+          <h4>List Available Tools</h4>
+          <pre># HTTP request
+GET /mcp
+
+# Response
+{
+  "tools": [
+    {
+      "name": "read_file",
+      "description": "Read file content from workspace",
+      "params": ["path", "startLine", "endLine"],
+      "required": ["path"]
+    },
+    {
+      "name": "write_file",
+      "description": "Write content to a file",
+      "params": ["path", "content"],
+      "required": ["path", "content"]
+    }
+  ]
+}</pre>
+
+          <h4>MCP JSON-RPC 2.0</h4>
+          <p>The MCP endpoint also accepts JSON-RPC 2.0 messages:</p>
+          <pre># List tools
+POST /mcp
+{"jsonrpc":"2.0","method":"tools/list","id":1}
+
+# Call a tool
+POST /mcp
+{"jsonrpc":"2.0","method":"tools/call","params":{"name":"read_file","arguments":{"path":"./hamba.js"}},"id":2}
+
+# Initialize
+POST /mcp
+{"jsonrpc":"2.0","method":"initialize","params":{"name":"my-client","version":"1.0"},"id":0}</pre>
+
+          <h4>Using Tools in Chat</h4>
+          <p>Pass tool definitions in the chat request. The agent will call tools automatically when needed:</p>
+          <pre>POST /v1/chat/completions
+{
+  "model": "code-guru",
+  "messages": [{"role":"user","content":"Read the hamba.js file and explain the routing"}],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "read_file",
+        "description": "Read file content",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {"type": "string", "description": "File path"}
+          },
+          "required": ["path"]
+        }
+      }
+    }
+  ]
+}
+
+# Response with tool call
+{
+  "choices": [{
+    "message": {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [{
+        "id": "call_abc123",
+        "type": "function",
+        "function": {
+          "name": "read_file",
+          "arguments": "{\"path\":\"./hamba.js\"}"
+        }
+      }]
+    },
+    "finish_reason": "tool_calls"
+  }]
+}</pre>
+
+          <h4>WebSocket Tool Calls</h4>
+          <pre>// Connect via WebSocket
+const ws = new WebSocket('ws://localhost:5010');
+
+// Send chat with tools
+ws.send(JSON.stringify({
+  type: 'chat',
+  message: 'Read and analyze hamba.js',
+  model: 'code-guru',
+  tools: [{ type: 'function', function: { name: 'read_file', ... } }]
+}));
+
+// Receive response
+ws.onmessage = (e) => {
+  const data = JSON.parse(e.data);
+  if (data.type === 'response_complete') {
+    console.log(data.data.response);
+  }
+};</pre>
+        </div>
+      </div>
+
+      <!-- Doc: Provider System -->
+      <div class="acc" onclick="this.classList.toggle('open')">
+        <div class="acc-hdr"><span><i class="fas fa-server" style="color:var(--pink);"></i> Provider System — OpenCode,
+            Groq, Gemini</span><span class="arrow">▶</span></div>
+        <div class="acc-body">
+          <h4>Provider Priority Chain</h4>
+          <table>
+            <tr>
+              <th>#</th>
+              <th>Provider</th>
+              <th>Type</th>
+              <th>Models</th>
+              <th>Role</th>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td><strong>OpenCode</strong></td>
+              <td>OpenAI-compatible</td>
+              <td>deepseek-v4-flash-free, mimo-v2.5-free, big-pickle, hy3-free, nemotron-3-ultra-free,
+                north-mini-code-free</td>
+              <td>Primary (free models)</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><strong>Groq</strong></td>
+              <td>OpenAI-compatible</td>
+              <td>llama-3.3-70b, qwen-32b, deepseek-r1, gemma-2, etc.</td>
+              <td>Secondary fallback</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><strong>Gemini</strong></td>
+              <td>Google-native</td>
+              <td>gemini-flash, gemini-lite, gemini-pro</td>
+              <td>Tertiary fallback</td>
+            </tr>
+          </table>
+
+          <h4>Fallback Logic</h4>
+          <ol style="padding-left:20px;">
+            <li>Try primary provider (OpenCode) with requested model</li>
+            <li>If rate-limited or errors → try next provider (Groq)</li>
+            <li>If model not found → try all models from next provider</li>
+            <li>If all providers fail → return 502 with tried_providers list</li>
+          </ol>
+
+          <h4>Agent Model Masking</h4>
+          <p>Agents like <code>code-guru</code> map to real models (e.g., <code>deepseek-v4-flash-free</code>) but the
+            API hides this. The response shows <code>"model": "code-guru"</code>, not the actual model name.</p>
+
+          <h4>View All Models</h4>
+          <pre># Public agent models (masked)
+GET /v1/models
+
+# All provider models (unmasked)
+GET /api/v1/models</pre>
+        </div>
+      </div>
+
+      <!-- Doc: Mission System -->
+      <div class="acc" onclick="this.classList.toggle('open')">
+        <div class="acc-hdr"><span><i class="fas fa-brain" style="color:var(--yellow);"></i> Mission System —
+            Multi-Agent Orchestration</span><span class="arrow">▶</span></div>
+        <div class="acc-body">
+          <h4>6 Specialist Agents</h4>
+          <table>
+            <tr>
+              <th>Agent ID</th>
+              <th>Name</th>
+              <th>Role</th>
+            </tr>
+            <tr>
+              <td><code>code-guru</code></td>
+              <td>Code Guru - Monu</td>
+              <td>Architecture & design</td>
+            </tr>
+            <tr>
+              <td><code>bug-hunter</code></td>
+              <td>Bug Hunter</td>
+              <td>Debugging specialist</td>
+            </tr>
+            <tr>
+              <td><code>security</code></td>
+              <td>Security Guard</td>
+              <td>Security analysis</td>
+            </tr>
+            <tr>
+              <td><code>performance</code></td>
+              <td>Speed Freak</td>
+              <td>Performance optimization</td>
+            </tr>
+            <tr>
+              <td><code>doc-king</code></td>
+              <td>Documentation King</td>
+              <td>Technical documentation</td>
+            </tr>
+            <tr>
+              <td><code>quality</code></td>
+              <td>QA Engineer</td>
+              <td>Quality assurance</td>
+            </tr>
+          </table>
+
+          <h4>Mission Flow</h4>
+          <ol style="padding-left:20px;">
+            <li><strong>Phase 1:</strong> Intent extraction — analyze user input</li>
+            <li><strong>Phase 2:</strong> Agent routing — select relevant agents</li>
+            <li><strong>Phase 3:</strong> Parallel execution — agents work simultaneously</li>
+            <li><strong>Phase 4:</strong> Verification — alignment check + proof verification</li>
+            <li><strong>Phase 5:</strong> Merge — combine outputs into final response</li>
+          </ol>
+
+          <h4>Mission Endpoints</h4>
+          <pre># Via chat API
+POST /v1/chat/completions
+{"model":"mission","messages":[...]}
+
+# Via mission API (with named SSE events)
+POST /api/mission
+{"input":"Your question here"}
+Accept: text/event-stream
+
+# Via anti-dote (6-step validation)
+POST /api/v1/anti-dote
+{"input":"Your question here"}</pre>
+
+          <h4>Three-File Memory System</h4>
+          <ul style="padding-left:20px;">
+            <li><code>SSOT.md</code> — Project context (auto-generated)</li>
+            <li><code>syllabus.md</code> — Agent learned knowledge</li>
+            <li><code>memory.json</code> — Conversation history</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Doc: Chat Interface Design Guide -->
+      <div class="acc" onclick="this.classList.toggle('open')">
+        <div class="acc-hdr"><span><i class="fas fa-palette" style="color:var(--pink);"></i> Chat Interface Design Guide
+            — ChatGPT Style</span><span class="arrow">▶</span></div>
+        <div class="acc-body">
+          <h4>Design Requirements</h4>
+          <ul style="padding-left:20px;">
+            <li>100% mobile + computer responsive</li>
+            <li>ChatGPT-style clean UI</li>
+            <li>Authentication required before accessing chat</li>
+            <li>Sidebar with agent/model/provider/server lists</li>
+            <li>Server list with fallback chain</li>
+            <li>User profile with password change & image upload</li>
+            <li>Settings with "Delete Data" option (full data wipe)</li>
+            <li>Admin login page separate from user login</li>
+            <li>Agent thinking blocks (collapsible)</li>
+            <li>Clean, formatted response display</li>
+            <li>Copy button on each response</li>
+            <li>Audio playback for responses (TTS)</li>
+            <li>Web search & tool call indicators</li>
+          </ul>
+
+          <h4>Pages Needed</h4>
+          <table>
+            <tr>
+              <th>Page</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td><code>/</code></td>
+              <td>Login/Auth gate → Chat interface</td>
+            </tr>
+            <tr>
+              <td><code>/admin</code></td>
+              <td>Admin login → Dashboard</td>
+            </tr>
+            <tr>
+              <td><code>/profile</code></td>
+              <td>User profile (name, password, image)</td>
+            </tr>
+            <tr>
+              <td><code>/settings</code></td>
+              <td>Settings (delete data, preferences)</td>
+            </tr>
+            <tr>
+              <td><code>/servers</code></td>
+              <td>Server list & management</td>
+            </tr>
+          </table>
+
+          <h4>API URL for Frontend</h4>
+          <p>Set the API base URL to: <code>https://m.skilltoearn.org/v1</code></p>
+          <p>All endpoints above become available when this URL is configured.</p>
+
+          <h4>Responsive Breakpoints</h4>
+          <pre>/* Mobile: < 640px — single column, hamburger menu */
+/* Tablet: 640px - 1024px — collapsible sidebar */
+/* Desktop: > 1024px — full sidebar + content */</pre>
+        </div>
+      </div>
+
+      <!-- Doc: Anti-Dote System -->
+      <div class="acc" onclick="this.classList.toggle('open')">
+        <div class="acc-hdr"><span><i class="fas fa-shield-halved" style="color:var(--red);"></i> Anti-Dote Type Safety
+            — 6-Step Validation</span><span class="arrow">▶</span></div>
+        <div class="acc-body">
+          <h4>What is Anti-Dote?</h4>
+          <p>A mathematical guarantee system: ∀req ∈ AntidoteRequest: validateSchema(req) ∧ checkProof(req) ⇒
+            setGoalContract(req) ⇒ execute(req) ⇒ verifyOutput(res)</p>
+
+          <h4>6 Error Types</h4>
+          <table>
+            <tr>
+              <th>Error</th>
+              <th>Code</th>
+              <th>Meaning</th>
+            </tr>
+            <tr>
+              <td>INVALID_REQUEST</td>
+              <td>ANTIDOTE_INVALID_REQUEST</td>
+              <td>Malformed input</td>
+            </tr>
+            <tr>
+              <td>PROOF_FAILED</td>
+              <td>ANTIDOTE_PROOF_FAILED</td>
+              <td>Logical proof check failed</td>
+            </tr>
+            <tr>
+              <td>LIMIT_EXCEEDED</td>
+              <td>ANTIDOTE_LIMIT_EXCEEDED</td>
+              <td>Rate/token/payload limit</td>
+            </tr>
+            <tr>
+              <td>CONTRACT_FAILED</td>
+              <td>ANTIDOTE_CONTRACT_FAILED</td>
+              <td>Goal contract not established</td>
+            </tr>
+            <tr>
+              <td>EXECUTION_FAILED</td>
+              <td>ANTIDOTE_EXECUTION_FAILED</td>
+              <td>Execution error</td>
+            </tr>
+            <tr>
+              <td>VERIFICATION_FAILED</td>
+              <td>ANTIDOTE_VERIFICATION_FAILED</td>
+              <td>Output doesn't satisfy contract</td>
+            </tr>
+          </table>
+
+          <h4>Usage</h4>
+          <pre>POST /api/v1/anti-dote
+{
+  "input": "Analyze this code for security issues",
+  "context": "optional system context",
+  "tools": [],
+  "session_id": "optional",
+  "client_id": "optional"
+}</pre>
+        </div>
+      </div>
+
+      <!-- Doc: WebSocket -->
+      <div class="acc" onclick="this.classList.toggle('open')">
+        <div class="acc-hdr"><span><i class="fas fa-plug" style="color:var(--cyan);"></i> WebSocket — Real-time
+            Bidirectional Chat</span><span class="arrow">▶</span></div>
+        <div class="acc-body">
+          <h4>Connect</h4>
+          <pre>const ws = new WebSocket('ws://localhost:5010');
+
+// Auth
+ws.send(JSON.stringify({ type: 'auth' }));
+// Response: { type: 'auth_success', timestamp: '...' }</pre>
+
+          <h4>Send Chat Message</h4>
+          <pre>ws.send(JSON.stringify({
+  type: 'chat',
+  message: 'Explain this code',
+  model: 'code-guru',      // or 'mission'
+  agent_id: 'code-guru',   // optional override
+  session_id: 'optional',
+  tools: []                // optional tool definitions
+}));</pre>
+
+          <h4>Receive Response</h4>
+          <pre>ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  
+  switch (data.type) {
+    case 'response_complete':
+      // Full response available
+      console.log(data.data.response);
+      console.log(data.data.model);
+      console.log(data.data.session_id);
+      break;
+    case 'auth_success':
+      console.log('Connected!');
+      break;
+  }
+};</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ═══ STATE ═══
+    var BASE_ORIGIN = '', BASE_PREFIX = '', OK = false, REF = null;
+    var GETS = [
+      ['/', 'Dashboard HTML'],
+      ['/health', 'Health check'],
+      ['/identity', 'System identity'],
+      ['/status', 'Server status'],
+      ['/v1/models', 'Agent models (OpenAI)'],
+      ['/api/v0/models', 'Agent models (masked)'],
+      ['/api/v1/models', 'Provider models (all)'],
+      ['/api/rate-limit', 'Rate limit status'],
+      ['/api/mcp-clients', 'MCP clients'],
+      ['/api/clients', 'Client list HTML'],
+      ['/api/domain', 'Domain config'],
+      ['/api/pusher-config', 'Pusher config'],
+      ['/api/agents', 'Agent list'],
+      ['/api/admin', 'Admin dashboard HTML'],
+      ['/api/admin/stats', 'Admin stats JSON'],
+      ['/api/admin/ssot-status', 'SSOT status'],
+      ['/api/admin/agents-status', 'Agent usage'],
+      ['/api/admin/mcp-connections', 'MCP connections'],
+      ['/api/admin/rate-limits', 'Rate limits'],
+      ['/api/locks', 'Lock logs'],
+      ['/api/locks/stats', 'Lock stats'],
+      ['/api/normalize-list', 'Normalizer info'],
+      ['/api/config', 'Runtime config'],
+      ['/api/ssot', 'SSOT content'],
+      ['/api/sessions', 'Sessions list'],
+      ['/api/sessions/search', 'Search sessions'],
+      ['/api/verify-session', 'Verify session'],
+      ['/api/syllabus', 'Syllabus'],
+      ['/api/memory', 'Memory'],
+      ['/mcp', 'MCP tools list'],
+    ];
+    var POSTS = [
+      ['/api/rate-limit/reset', 'Reset rate limit', '{}'],
+      ['/api/normalize', 'Test normalizer', '{"model":"test","choices":[{"message":{"content":"hello"}}]}'],
+      ['/api/config', 'Update config', '{"logLevel":"DEBUG"}'],
+      ['/api/set-working-dir', 'Set working dir', '{"directory":"."}'],
+      ['/v1/chat/completions', 'Chat completion', '{"model":"mission","messages":[{"role":"user","content":"Hello"}],"stream":false}'],
+      ['/api/mission', 'Mission execution', '{"input":"Hello, who are you?"}'],
+      ['/api/v1/anti-dote', 'Anti-dote', '{"input":"Hello test"}'],
+      ['/mcp', 'MCP JSON-RPC', '{"jsonrpc":"2.0","method":"tools/list","id":1}'],
+      ['/api/workspace', 'Workspace', '{"directory":"."}'],
+      ['/api/syllabus', 'Add syllabus', '{"topic":"test","content":"entry"}'],
+    ];
+
+    // ═══ CACHE ═══
+    function save(url) { localStorage.setItem('bz_url', url); localStorage.setItem('bz_exp', Date.now() + 86400000); }
+    function load() { var u = localStorage.getItem('bz_url'), e = parseInt(localStorage.getItem('bz_exp') || '0'); return (u && e > Date.now()) ? u : null; }
+    function clr() { localStorage.removeItem('bz_url'); localStorage.removeItem('bz_exp'); BASE_ORIGIN = ''; BASE_PREFIX = ''; OK = false; $('url').value = ''; sts('err', 'Cache cleared'); }
+    function P(u) { $('url').value = u; }
+
+    // ═══ CONNECT ═══
+    async function connect() {
+      var u = ($('url').value || '').trim().replace(/\/+$/, '');
+      if (!u) { notify('Enter URL', 'info'); return; }
+      // Parse URL: separate origin from path prefix
+      try {
+        var parsed = new URL(u);
+        BASE_ORIGIN = parsed.origin;
+        BASE_PREFIX = parsed.pathname.replace(/\/+$/, '');
+      } catch (e) {
+        // Fallback: treat whole input as origin, no prefix
+        BASE_ORIGIN = u;
+        BASE_PREFIX = '';
+      }
+      $('connBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i>...'; $('connBtn').disabled = true;
+      try {
+        var r = await ac('GET', '/health');
+        OK = true; save(u);
+        sts('ok', 'Connected: v' + ((r.data || {}).version || '?') + ' | Port ' + ((r.data || {}).port || '?') + (BASE_PREFIX ? ' | Prefix: ' + BASE_PREFIX : ''));
+        notify('Connected!', 'ok');
+        loadAgents(); loadModels(); refresh();
+        if (REF) clearInterval(REF); REF = setInterval(refresh, 15000);
+      } catch (e) { OK = false; BASE_ORIGIN = ''; BASE_PREFIX = ''; sts('err', 'Failed: ' + e.message); notify('Connection failed', 'err'); }
+      $('connBtn').innerHTML = '<i class="fas fa-plug"></i> Connect'; $('connBtn').disabled = false;
+    }
+    function sts(t, m) { var e = $('urlSt'); e.className = 'urlstatus ' + t; e.innerHTML = '<i class="fas fa-' + (t === 'ok' ? 'fa-circle-check' : 'fa-circle-xmark') + '"></i> ' + m; }
+
+    // ═══ API ═══
+    async function ac(m, p, b) {
+      if (!OK || !BASE_ORIGIN) throw new Error('Not connected');
+      var url = BASE_ORIGIN + BASE_PREFIX + p;
+      var o = { method: m, headers: { 'Content-Type': 'application/json' } };
+      if (b && m !== 'GET') o.body = typeof b === 'string' ? b : JSON.stringify(b);
+      var r = await fetch(url, o);
+      var ct = r.headers.get('content-type') || '';
+      if (ct.includes('text/html')) return { _html: true, status: r.status, text: await r.text() };
+      return { status: r.status, data: await r.json() };
+    }
+
+    // ═══ TEST ═══
+    async function testR(m, p, bid, body) {
+      if (!OK) { notify('Not connected', 'info'); return; }
+      var t0 = Date.now(), el = bid ? $(bid) : null;
+      if (el) { el.className = 'resp-body load'; el.textContent = 'Testing ' + m + ' ' + p + '...'; }
+      try {
+        var r = await ac(m, p, body);
+        var ms = Date.now() - t0;
+        var d;
+        if (r._html) d = '[HTML] ' + r.status + ' | ' + r.text.length + ' chars | ' + ms + 'ms';
+        else d = JSON.stringify(r.data, null, 2) + '\n\n--- Status: ' + r.status + ' | Time: ' + ms + 'ms ---';
+        if (el) { el.className = 'resp-body'; el.textContent = d; }
+        return { p: p, s: r.status || 200, ms: ms, ok: true };
+      } catch (e) {
+        var ms = Date.now() - t0;
+        if (el) { el.className = 'resp-body err'; el.textContent = 'ERROR: ' + e.message + '\n' + ms + 'ms'; }
+        return { p: p, s: 0, ms: ms, ok: false };
+      }
+    }
+    async function quickTest(p, bid) { await testR('GET', p, bid); }
+    async function testAll() {
+      if (!OK) { notify('Not connected', 'info'); return; }
+      var b = $('ovResults'); if (b) { b.className = 'resp-body load'; b.textContent = 'Testing all GET routes...\n\n'; }
+      var res = [];
+      for (var i = 0; i < GETS.length; i++) {
+        if (b) b.textContent += 'Testing ' + GETS[i][0] + '...';
+        var r = await testR('GET', GETS[i][0]);
+        res.push(r);
+        if (b) { b.textContent = b.textContent.replace('Testing ' + GETS[i][0] + '...', ''); b.textContent += '  ' + (r.ok ? '✅' : '❌') + ' ' + r.s + ' (' + r.ms + 'ms)\n'; }
+      }
+      var pass = res.filter(function (x) { return x.ok }).length;
+      if (b) { b.textContent += '\n══════════════════════════════════\nTotal: ' + res.length + ' | Passed: ' + pass + ' | Failed: ' + (res.length - pass) + '\n'; b.className = 'resp-body'; }
+      notify('Tested ' + res.length + ': ' + pass + ' passed', pass === res.length ? 'ok' : 'info');
+    }
+    function copyResp(id) { var e = $(id); if (e) navigator.clipboard.writeText(e.textContent).then(function () { notify('Copied', 'info'); }); }
+
+    // ═══ RENDER ROUTES ═══
+    function renderR() {
+      $('getCnt').textContent = GETS.length;
+      $('getRts').innerHTML = GETS.map(function (r) { return '<div class="rt"><span class="method b-get">GET</span><span class="path">' + r[0] + '</span><span class="desc">' + r[1] + '</span><button class="btn b-gray b-sm" onclick="testR(\'GET\',\'' + r[0] + '\',\'getRespB\')"><i class="fas fa-play"></i> Test</button></div>'; }).join('');
+      $('postCnt').textContent = POSTS.length;
+      $('postRts').innerHTML = POSTS.map(function (r) { return '<div class="rt"><span class="method b-post">POST</span><span class="path">' + r[0] + '</span><span class="desc">' + r[1] + '</span><button class="btn b-gray b-sm" onclick="testR(\'POST\',\'' + r[0] + '\',\'postRespB\',' + r[2] + ')"><i class="fas fa-play"></i> Test</button></div>'; }).join('');
+    }
+
+    // ═══ CHAT ═══
+    async function loadAgents() {
+      try {
+        var r = await ac('GET', '/api/agents');
+        if (r.data && r.data.agents) {
+          var s = $('chatAgent'); s.innerHTML = '<option value="mission">mission (multi-agent)</option>';
+          r.data.agents.forEach(function (a) { s.innerHTML += '<option value="' + a.id + '">' + a.id + ' — ' + a.name + '</option>'; });
+        }
+      } catch (e) { }
+    }
+    async function loadModels() {
+      try {
+        var r = await ac('GET', '/api/v1/models');
+        // Models loaded (used internally)
+      } catch (e) { }
+    }
+
+    async function sendMsg() {
+      var inp = $('chatIn'), agent = $('chatAgent').value, mode = $('chatMode').value, msg = inp.value.trim();
+      if (!msg || !OK) return;
+      addMsg('user', msg); inp.value = '';
+      var btn = $('chatBtn'); btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; btn.disabled = true;
+      try {
+        var t0 = Date.now(), r, body;
+        if (mode === 'chat') {
+          body = { model: agent, messages: [{ role: 'user', content: msg }], stream: false };
+          r = await ac('POST', '/v1/chat/completions', body);
+        } else if (mode === 'mission') {
+          body = { input: msg };
+          r = await ac('POST', '/api/mission', body);
+        } else {
+          body = { input: msg };
+          r = await ac('POST', '/api/v1/anti-dote', body);
+        }
+        var ms = Date.now() - t0;
+        if (r.data && r.data.choices) addMsg('assistant', r.data.choices[0].message.content || 'No response', agent + ' • ' + ms + 'ms');
+        else if (r.data && r.data.combined) addMsg('assistant', r.data.combined, agent + ' • ' + ms + 'ms');
+        else if (r.data && r.data.error) addMsg('error', r.data.error.message || JSON.stringify(r.data.error));
+        else addMsg('assistant', JSON.stringify(r.data, null, 2).slice(0, 2000));
+      } catch (e) { addMsg('error', e.message); }
+      finally { btn.innerHTML = '<i class="fas fa-paper-plane"></i>'; btn.disabled = false; }
+    }
+    function addMsg(role, text, meta) {
+      var c = $('chatMsgs');
+      if (c.children.length === 1 && c.querySelector('.fa-robot')) c.innerHTML = '';
+      var d = document.createElement('div');
+      d.className = 'msg ' + (role === 'user' ? 'msg-u' : role === 'error' ? 'msg-e' : 'msg-a');
+      var h = esc(text);
+      if (meta) h += '<small>' + esc(meta) + '</small>';
+      d.innerHTML = h; c.appendChild(d); c.scrollTop = c.scrollHeight;
+    }
+    function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    // ═══ TABS ═══
+    function stab(n) {
+      document.querySelectorAll('.panel').forEach(function (e) { e.classList.remove('on'); });
+      document.querySelectorAll('.tab').forEach(function (e) { e.classList.remove('on'); });
+      var p = $('p-' + n); if (p) p.classList.add('on');
+      var t = document.querySelector('.tab[data-t="' + n + '"]'); if (t) t.classList.add('on');
+    }
+
+    // ═══ UTIL ═══
+    function $(id) { return document.getElementById(id); }
+    function notify(m, t) {
+      var n = document.createElement('div'); n.className = 'notif ' + (t || 'info');
+      n.innerHTML = '<i class="fas fa-' + (t === 'ok' ? 'check-circle' : t === 'err' ? 'times-circle' : 'info-circle') + '"></i> ' + m;
+      document.body.appendChild(n); setTimeout(function () { if (n.parentElement) n.remove(); }, 3500);
+    }
+
+    // ═══ REFRESH STATS ═══
+    async function refresh() {
+      if (!OK || !BASE_ORIGIN) return;
+      try {
+        var h = await ac('GET', '/health');
+        if (h.data) {
+          $('sStat').textContent = 'OK';
+          $('sVer').textContent = 'v' + (h.data.version || '?');
+          $('sUp').textContent = h.data.uptime ? Math.floor(h.data.uptime / 60) + 'm' : '?';
+        }
+      } catch (e) { $('sStat').textContent = 'ERR'; }
+      try {
+        var st = await ac('GET', '/status');
+        if (st.data) {
+          $('sReq').textContent = st.data.requestCount || st.data.totalRequests || '?';
+          $('sAg').textContent = (st.data.agents && st.data.agents.length) || '?';
+          $('sSes').textContent = (st.data.sessions && st.data.sessions.length) || st.data.activeSessions || '?';
+        }
+      } catch (e) { /* stats unavailable */ }
+    }
+
+    // ═══ CUSTOM REQUEST ═══
+    document.addEventListener('DOMContentLoaded', function () {
+      var m = $('cMethod');
+      if (m) m.addEventListener('change', function () {
+        var v = this.value;
+        $('cBodyRow').style.display = (v === 'GET' || v === 'DELETE') ? 'none' : 'block';
+      });
+      var cp = $('cPath');
+      if (cp) cp.addEventListener('keydown', function (e) { if (e.key === 'Enter') sendCustom(); });
+    });
+
+    async function sendCustom() {
+      var path = ($('cPath').value || '').trim();
+      if (!path) { notify('Enter a path', 'info'); return; }
+      var method = $('cMethod').value;
+      var baseUrl = ($('cBaseUrl').value || '').trim();
+      if (!baseUrl) {
+        if (!BASE_ORIGIN) { notify('Not connected. Enter a URL or connect first.', 'info'); return; }
+        baseUrl = BASE_ORIGIN + BASE_PREFIX;
+      }
+
+      var btn = $('cSendBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      btn.disabled = true;
+
+      var body = null;
+      if (method !== 'GET' && method !== 'DELETE') {
+        var raw = ($('cBody').value || '').trim();
+        if (raw) {
+          try { body = JSON.parse(raw); }
+          catch (e) { notify('Invalid JSON body', 'err'); btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send'; btn.disabled = false; return; }
+        }
+      }
+
+      var t0 = Date.now(), el = $('cRespB'), meta = $('cRespMeta');
+      el.className = 'resp-body load';
+      el.textContent = method + ' ' + baseUrl + path + '...';
+
+      try {
+        var o = { method: method, headers: { 'Content-Type': 'application/json' } };
+        if (body) o.body = JSON.stringify(body);
+        var r = await fetch(baseUrl + path, o);
+        var ct = r.headers.get('content-type') || '';
+        var ms = Date.now() - t0;
+        var statusText = r.status + ' ' + r.statusText;
+        meta.textContent = statusText + ' | ' + ms + 'ms';
+
+        var data;
+        if (ct.includes('text/html')) {
+          data = '[HTML] ' + r.status + ' | ' + (await r.text()).length + ' chars';
+        } else if (ct.includes('text/event-stream')) {
+          data = '[SSE Stream] ' + r.status + ' | Use Chat tab with Stream checkbox';
+        } else {
+          try { data = JSON.stringify(await r.json(), null, 2); }
+          catch (e) { data = await r.text(); }
+        }
+
+        el.className = r.ok ? 'resp-body' : 'resp-body err';
+        el.textContent = data;
+        notify(method + ' ' + path + ' → ' + r.status, r.ok ? 'ok' : 'err');
+      } catch (e) {
+        var ms = Date.now() - t0;
+        meta.textContent = 'Error | ' + ms + 'ms';
+        el.className = 'resp-body err';
+        el.textContent = 'ERROR: ' + e.message;
+        notify('Request failed: ' + e.message, 'err');
+      }
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+      btn.disabled = false;
+    }
+
+    function copyRespText() {
+      var el = $('cRespB');
+      if (el && el.textContent) {
+        navigator.clipboard.writeText(el.textContent).then(function () { notify('Copied', 'info'); });
+      }
+    }
+
+    function clearCustom() {
+      $('cPath').value = '';
+      $('cBody').value = '';
+      $('cMethod').value = 'GET';
+      $('cBodyRow').style.display = 'none';
+      $('cRespB').textContent = 'Enter a path and click Send...';
+      $('cRespB').className = 'resp-body';
+      $('cRespMeta').textContent = '';
+    }
+
+    // ═══ INIT ═══
+    document.addEventListener('DOMContentLoaded', function () {
+      renderR();
+      var c = load();
+      if (c) { $('url').value = c; connect(); }
+      $('url').addEventListener('keydown', function (e) { if (e.key === 'Enter') connect(); });
+    });
+  </script>
+</body>
+
+</html>

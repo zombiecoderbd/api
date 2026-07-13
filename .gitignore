@@ -1,0 +1,67 @@
+# ═══════════════════════════════════════════════════════════
+# Mission Barisal — .gitignore
+# ═══════════════════════════════════════════════════════════
+
+# ── Dependencies ──
+node_modules/
+package-lock.json
+
+# ── Environment & Secrets ──
+.env
+.env.local
+.env.production
+.env.*.local
+
+# ── Runtime Data (auto-created) ──
+data/
+logs/
+cache/
+
+# ── Audio Files (large, not needed in git) ──
+doc/**/*.mp3
+doc/**/*.wav
+doc/**/*.ogg
+*.mp3
+*.wav
+*.ogg
+
+# ── Generated Reports (large) ──
+doc/reset-test-results.json
+doc/analysis-report.html
+
+# ── Test Files (dev only) ──
+test-reset.js
+test-results.json
+test-all-agents.js
+tests/
+*.test.js
+
+# ── OS Files ──
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ── IDE Files ──
+.vscode/
+.idea/
+*.code-workspace
+
+# ── Temp Files ──
+tmp/
+temp/
+*.tmp
+*.bak
+
+# ── PM2 ──
+.pm2/
+
+# ── Auto-generated (regenerated on server start) ──
+.zombiecoder/SSOT.md
+.zombiecoder/agents/memory.json
+.zombiecoder/agents/sessions/
+.zombiecoder/agents/syllabus.md
+
+# ── Bug hunter intro (dev only) ──
+bug-hunter-intro.txt
