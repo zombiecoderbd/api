@@ -2782,7 +2782,8 @@ function buildAgentIdentity(agent) {
       "\n3. Always respond in Bengali unless user requests English." +
       "\n4. PROOF REQUIRED: Every claim needs verifiable evidence. Say 'আমার কাছে প্রমাণ নেই' if unsure." +
       "\n5. NEVER try to match a specific model's behavior or style. You are a PERSON, not a model." +
-      "\n6. If a tool call fails, STOP. Do not retry in a different 'model style' — just report the error."
+      "\n6. If a tool call fails, STOP. Do not retry in a different 'model style' — just report the error." +
+      "\n7. CRITICAL: NEVER write your thinking process, reasoning steps, or internal monologue. Start your response DIRECTLY with the answer. Do NOT say 'I need to...', 'Let me...', 'The user asked...'. Just ANSWER."
     );
   }
 
@@ -3626,9 +3627,20 @@ async function callModelWithTools(
       });
     }
   }
+  // After max rounds, force a text-only response (no tools) instead of error
+  log("WARN", "MAX_TOOL_ROUNDS_EXCEEDED", { max: MAX_ROUNDS, model });
+  messages.push({
+    role: "user",
+    content:
+      "IMPORTANT: You have used all available tool calls. Now provide your FINAL ANSWER based on the information you already have. Do NOT call any more tools. Just write your response directly.",
+  });
+  const forceResponse = await callModel(model, messages, temperature, undefined, undefined, null, providerOverride);
+  if (forceResponse.success && forceResponse.content) {
+    return { success: true, content: forceResponse.content, tool_calls: null };
+  }
   return {
     success: false,
-    error: "Max tool call rounds (5) exceeded",
+    error: "Max tool call rounds (" + MAX_ROUNDS + ") exceeded",
     content: "",
   };
 }
@@ -4717,13 +4729,27 @@ async function phase3_combinedOutput(
     : "Combined output generation failed.";
   if (finalContent) {
     const metaPatterns = [
-      /^(I need to|I will now|Let me|আমি এখন|এখন আমি|আমাকে এখন).{0,100}\n/gim,
-      /^(Combining| merging| একত্রিত|Merging).{0,100}\n/gim,
-      /^(Based on the analysis|After reviewing|বিশ্লেষণের পর).{0,100}\n/gim,
+      // English thinking patterns
+      /^(I need to|I will now|Let me|I should|I have to|I must|I can see|I notice|I think|I believe).{0,200}\n/gim,
+      /^(Combining| merging|Merging|Analyzing|Checking|Verifying|Reviewing|Comparing|Evaluating).{0,200}\n/gim,
+      /^(Based on the analysis|After reviewing|Looking at|Examining|The user asked|The user wants).{0,200}\n/gim,
+      /^(Actually|However|Wait|Hmm|So basically|In other words|Let me explain).{0,200}\n/gim,
+      // Bengali thinking patterns
+      /^(আমি এখন|এখন আমি|আমাকে এখন|দেখি তো|বলতে হবে|চেক করি|বিশ্লেষণ|পরীক্ষা করি).{0,200}\n/gim,
+      /^(একত্রিত|মার্জ|সংযুক্ত|সমন্বয়).{0,200}\n/gim,
+      // Agent report references (model describing what agents said)
+      /^((?:Code Guru|Bug Hunter|Security|Performance|Doc King|QA Tyrant|মনু|জুয়েল|বৃষ্টি|রাশেদ|হালিম|মজনু).{0,50}(started|gave|says|mentioned|noted|pointed out)).{0,200}\n/gim,
+      // "Write the FINAL ANSWER" echo
+      /^(Write the FINAL|FINAL ANSWER|The final answer).{0,200}\n/gim,
     ];
     for (const p of metaPatterns) {
       finalContent = finalContent.replace(p, "");
     }
+    // Also strip inline thinking — "The user asked... which is Bengali for..."
+    finalContent = finalContent.replace(/The user asked "[^"]*" which is Bengali for "[^"]*"\n\n?/g, "");
+    finalContent = finalContent.replace(/I need to check the (?:agents'|agent) reports\.?\s*\n?/g, "");
+    finalContent = finalContent.replace(/Let me (?:search|check|verify|look|read|see)[^.]*\.?\s*\n?/g, "");
+    finalContent = finalContent.replace(/Since the user is asking in Bengali, I should answer in Bengali\.?\s*\n?/g, "");
     finalContent = finalContent.trim();
   }
 
@@ -8809,30 +8835,12 @@ const server = http.createServer(async (req, res) => {
           };
 
           // Progress callback for executeMission
+          // INTERNAL ONLY — log progress but do NOT send to client
           let progressCount = 0;
           const progressCallback = (phase, id, info) => {
             progressCount++;
-            const cleanInfo = stripEmoji(info || "").slice(0, 150);
-            let prefix = phase;
-            if (phase === "agent-working") prefix = "working";
-            else if (phase === "agent-done") prefix = "done";
-            else if (phase === "thinking") prefix = "thinking";
-            else if (phase === "phase-skip") prefix = "skip";
-            else if (phase === "phase3") prefix = "merge";
-            else if (phase === "phase3-done") prefix = "final";
-            else if (phase === "mission-start") prefix = "start";
-            else if (phase === "phase2") prefix = "verify";
-            const content = cleanInfo
-              ? "[" + prefix + "] " + id + ": " + cleanInfo
-              : "[" + prefix + "] " + id;
-            const chunk = {
-              id: sseId,
-              object: "chat.completion.chunk",
-              created: Math.floor(Date.now() / 1000),
-              model: "mission",
-              choices: [{ index: 0, delta: { content }, finish_reason: null }],
-            };
-            res.write("data: " + JSON.stringify(chunk) + "\n\n");
+            // Log internally for debugging — never send to client
+            log("DEBUG", "MISSION_PROGRESS", { phase, id, info: (info || "").slice(0, 100) });
           };
 
           const result = await executeMission(
@@ -8849,6 +8857,17 @@ const server = http.createServer(async (req, res) => {
           pushDone = originalPushDone;
 
           // Final chunk with the actual content
+          // Extra safety: strip any remaining thinking artifacts
+          let finalCombined = result.combined || "";
+          if (finalCombined) {
+            finalCombined = finalCombined
+              .replace(/The user asked "[^"]*" which is Bengali for "[^"]*"\n\n?/g, "")
+              .replace(/I need to check the (?:agents'|agent) reports\.?\s*\n?/g, "")
+              .replace(/Let me (?:search|check|verify|look|read|see)[^.]*\.?\s*\n?/g, "")
+              .replace(/Since the user is asking in Bengali, I should answer in Bengali\.?\s*\n?/g, "")
+              .replace(/^((?:Code Guru|Bug Hunter|Security|Performance|Doc King|QA Tyrant|মনু|জুয়েল|বৃষ্টি|রাশেদ|হালিম|মজনু).{0,50}(started|gave|says|mentioned|noted|pointed out)).{0,200}\n/gim, "")
+              .trim();
+          }
           const finalChunk = {
             id: sseId,
             object: "chat.completion.chunk",
@@ -8857,7 +8876,7 @@ const server = http.createServer(async (req, res) => {
             choices: [
               {
                 index: 0,
-                delta: { content: result.combined || "" },
+                delta: { content: finalCombined },
                 finish_reason: "stop",
               },
             ],
@@ -8877,6 +8896,18 @@ const server = http.createServer(async (req, res) => {
           tools,
         );
 
+        // Extra safety: strip any remaining thinking artifacts
+        let cleanCombined = result.combined || "";
+        if (cleanCombined) {
+          cleanCombined = cleanCombined
+            .replace(/The user asked "[^"]*" which is Bengali for "[^"]*"\n\n?/g, "")
+            .replace(/I need to check the (?:agents'|agent) reports\.?\s*\n?/g, "")
+            .replace(/Let me (?:search|check|verify|look|read|see)[^.]*\.?\s*\n?/g, "")
+            .replace(/Since the user is asking in Bengali, I should answer in Bengali\.?\s*\n?/g, "")
+            .replace(/^((?:Code Guru|Bug Hunter|Security|Performance|Doc King|QA Tyrant|মনু|জুয়েল|বৃষ্টি|রাশেদ|হালিম|মজনু).{0,50}(started|gave|says|mentioned|noted|pointed out)).{0,200}\n/gim, "")
+            .trim();
+        }
+
         jsonResponse(res, result.success ? 200 : 500, {
           id: "chatcmpl-" + crypto.randomUUID().replace(/-/g, ""),
           object: "chat.completion",
@@ -8885,17 +8916,15 @@ const server = http.createServer(async (req, res) => {
           choices: [
             {
               index: 0,
-              message: { role: "assistant", content: result.combined || "" },
+              message: { role: "assistant", content: cleanCombined },
               finish_reason: "stop",
             },
           ],
           usage: {
             prompt_tokens: Math.ceil(JSON.stringify(messages).length / 4),
-            completion_tokens: Math.ceil((result.combined || "").length / 4),
+            completion_tokens: Math.ceil(cleanCombined.length / 4),
             total_tokens: Math.ceil(
-              (JSON.stringify(messages).length +
-                (result.combined || "").length) /
-                4,
+              (JSON.stringify(messages).length + cleanCombined.length) / 4
             ),
           },
           session_id: sessionId,
