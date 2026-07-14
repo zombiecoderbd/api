@@ -1359,6 +1359,8 @@ function log(level, category, data, consoleOnly) {
 function parsePersonas(mdContent) {
   const agents = [];
   const blocks = mdContent.split(/^## agent:/m).slice(1);
+  // Model names to strip from persona text — agents should NEVER see these
+  const modelNames = /deepseek-v4-flash-free|mimo-v2\.5-free|big-pickle|nemotron-3-ultra-free|north-mini-code-free|hy3-free/gi;
   for (const block of blocks) {
     const idMatch = block.match(/^\s*([^\n]+)/);
     const id = idMatch ? idMatch[1].trim() : "";
@@ -1368,7 +1370,11 @@ function parsePersonas(mdContent) {
     const role = extractField(block, "role") || "general";
     const expertise = extractField(block, "expertise") || "";
     const priority = parseInt(extractField(block, "priority") || "99", 10);
-    const persona = extractPersona(block);
+    let persona = extractPersona(block);
+    // Strip model names from persona text — agents should NEVER know their model
+    if (persona) {
+      persona = persona.replace(modelNames, "AI model").replace(/\s{2,}/g, " ").trim();
+    }
     if (model && persona)
       agents.push({ id, name, model, role, expertise, priority, persona });
   }
@@ -2783,7 +2789,9 @@ function buildAgentIdentity(agent) {
       "\n4. PROOF REQUIRED: Every claim needs verifiable evidence. Say 'আমার কাছে প্রমাণ নেই' if unsure." +
       "\n5. NEVER try to match a specific model's behavior or style. You are a PERSON, not a model." +
       "\n6. If a tool call fails, STOP. Do not retry in a different 'model style' — just report the error." +
-      "\n7. CRITICAL: NEVER write your thinking process, reasoning steps, or internal monologue. Start your response DIRECTLY with the answer. Do NOT say 'I need to...', 'Let me...', 'The user asked...'. Just ANSWER."
+      "\n7. CRITICAL: NEVER write your thinking process, reasoning steps, or internal monologue. Start your response DIRECTLY with the answer. Do NOT say 'I need to...', 'Let me...', 'The user asked...'. Just ANSWER." +
+      "\n8. NEVER mention model names like 'deepseek-v4-flash-free', 'mimo-v2.5-free', 'big-pickle', 'nemotron', 'north-mini' in your response. These are internal system names. NEVER list other agents' model names either." +
+      "\n9. NEVER create tables listing all agents with their model names. Users should only know your name and role — NOT the technical model powering you."
     );
   }
 
@@ -6940,6 +6948,15 @@ function maskModelIdentity(text) {
       /As (?:an |a )?(?:AI|LLM|large language model|language model),?/gi,
       "",
     )
+    // Strip internal Mission Barisal model names that agents read from PERSONAS.md/syllabus.md
+    .replace(/deepseek-v4-flash-free/gi, "")
+    .replace(/mimo-v2\.5-free/gi, "")
+    .replace(/big-pickle/gi, "")
+    .replace(/nemotron-3-ultra-free/gi, "")
+    .replace(/north-mini-code-free/gi, "")
+    .replace(/hy3-free/gi, "")
+    .replace(/groq-compound/gi, "")
+    .replace(/groq-compound-mini/gi, "")
     // Strip "Powered by", "built on", "running on" branding
     .replace(
       /[Pp]owered by (?:OpenAI|ZombieCoder|Mission Barisal|AI)[^.!?\\n]*[.!?]?/gi,
@@ -6956,6 +6973,8 @@ function maskModelIdentity(text) {
       /(?:Provided by|Courtesy of|Brought to you by)[^.!?\\n]+[.!?]?/gi,
       "",
     )
+    // Strip markdown table rows containing model names
+    .replace(/\|[^|]*?(?:deepseek|mimo|big.pickle|nemotron|north.mini|hy3)[^|]*?\|/gi, "")
     .trim();
 
   return cleaned;
@@ -9173,6 +9192,8 @@ const server = http.createServer(async (req, res) => {
         );
 
         // Final [DONE] chunk
+        // Apply identity masking to full content — strip model names
+        const maskedFullContent = maskModelIdentity(fullContent);
         const doneData = JSON.stringify({
           id: responseId,
           object: "chat.completion.chunk",
@@ -9183,9 +9204,9 @@ const server = http.createServer(async (req, res) => {
             prompt_tokens: Math.ceil(
               JSON.stringify(augmentedMessages).length / 4,
             ),
-            completion_tokens: Math.ceil(fullContent.length / 4),
+            completion_tokens: Math.ceil(maskedFullContent.length / 4),
             total_tokens: Math.ceil(
-              (JSON.stringify(augmentedMessages).length + fullContent.length) /
+              (JSON.stringify(augmentedMessages).length + maskedFullContent.length) /
                 4,
             ),
           },
