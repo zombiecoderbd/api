@@ -227,6 +227,7 @@ api/
 
 - Node.js 18+ installed
 - OpenCode API key (free) — [Get one here](https://opencode.ai)
+- **No npm install needed** — zero external dependencies!
 
 ### 1. Clone the Repository
 
@@ -235,17 +236,12 @@ git clone https://github.com/zombiecoderbd/api.git
 cd api
 ```
 
-### 2. Install Dependencies
+### 2. Configure Environment
+
+Create a `.env` file (copy from example):
 
 ```bash
-npm install
-```
-
-### 3. Configure Environment
-
-Create a `.env` file:
-
-```bash
+cat > .env << 'EOF'
 PORT=5000
 NODE_ENV=development
 
@@ -261,13 +257,16 @@ PUSHER_APP_ID=your_pusher_app_id
 PUSHER_KEY=your_pusher_key
 PUSHER_SECRET=your_pusher_secret
 PUSHER_CLUSTER=your_pusher_cluster
+EOF
 ```
 
-### 4. Start the Server
+### 3. Start the Server
 
 ```bash
 node start.js
 ```
+
+**That's it!** No `npm install` needed — Mission Barisal uses **zero external dependencies**. Pure Node.js only.
 
 ### 5. Verify
 
@@ -634,18 +633,19 @@ See detailed guide: [doc/cPanel Deployment/CPANEL-DEPLOYMENT.md](doc/cPanel%20De
 
 **Quick Steps:**
 1. Upload files to cPanel File Manager
-2. `npm install` via Terminal
-3. Configure `.env` with API keys
-4. Start via cPanel Node.js App or PM2
-5. Set up reverse proxy (Apache/Nginx)
+2. Configure `.env` with API keys
+3. Start via cPanel Node.js App or PM2 (`node start.js`)
+4. Set up reverse proxy (Apache/Nginx)
+
+**Note:** No `npm install` needed — zero external dependencies!
 
 ### PM2 Deployment
 
 ```bash
-# Install PM2 globally
+# Install PM2 globally (only PM2 is needed)
 npm install -g pm2
 
-# Start server
+# Start server (no npm install in project directory!)
 pm2 start start.js --name mission-barisal
 
 # Save PM2 config
